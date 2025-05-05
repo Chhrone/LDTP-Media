@@ -71,14 +71,7 @@ class HomePage {
       });
     }
 
-    // Add scroll to top functionality for the "Create Your Story" button
-    const createStoryBtn = document.querySelector('.hero-btn-primary');
-    if (createStoryBtn) {
-      createStoryBtn.addEventListener('click', () => {
-        // Store a flag in sessionStorage to indicate we should scroll to top after transition
-        sessionStorage.setItem('scrollToTopAfterCreateStory', 'true');
-      });
-    }
+
   }
 
   _initLocateMeButton() {

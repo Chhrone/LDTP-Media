@@ -20,7 +20,6 @@ class App {
     this._updateUserUI();
     this._initBackToTop();
     this._initFabVisibility();
-    this._initCreateStoryFabScrollToTop();
     this._initAccessibility();
   }
 
@@ -275,18 +274,7 @@ class App {
     toggleElementsVisibility();
   }
 
-  // Initialize scroll to top functionality for create story FAB
-  _initCreateStoryFabScrollToTop() {
-    // Add click event listener to the create story FAB
-    if (this._createStoryFab) {
-      this._createStoryFab.addEventListener('click', () => {
-        // We don't prevent default here because we still want the navigation to happen
 
-        // Store a flag in sessionStorage to indicate we should scroll to top after transition
-        sessionStorage.setItem('scrollToTopAfterCreateStory', 'true');
-      });
-    }
-  }
 
   _initAccessibility() {
     // Handle skip to content functionality
@@ -378,8 +366,7 @@ class App {
       const isFromSettingsTransition = previousRoute === '/settings' && (route === '/' || route.startsWith('/page/'));
       const isFromAboutTransition = previousRoute === '/about' && (route === '/' || route.startsWith('/page/'));
 
-      // Check if we're transitioning to or from create-story page
-      const isToCreateStoryTransition = route === '/create-story';
+      // Check if we're transitioning from create-story page
       const isFromCreateStoryTransition = previousRoute === '/create-story' && (route === '/' || route.startsWith('/page/'));
 
       // Before rendering a new page, immediately hide the back-to-top button
@@ -454,21 +441,7 @@ class App {
           this._updateUserUI(); // Ensure user UI is updated after page render
         });
 
-        // Check if we need to scroll to top after transition to create-story page
-        if (isToCreateStoryTransition && sessionStorage.getItem('scrollToTopAfterCreateStory') === 'true') {
-          // Wait for the transition to finish before scrolling to top
-          transition.finished.then(() => {
-            // Add a small delay to ensure the page is fully rendered
-            setTimeout(() => {
-              window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-              });
-              // Clear the flag
-              sessionStorage.removeItem('scrollToTopAfterCreateStory');
-            }, 100);
-          });
-        }
+
 
         transition.ready.catch(error => {
           console.warn('View transition failed:', error);
@@ -481,18 +454,7 @@ class App {
         this._updateBackToTopButton(route);
         this._updateUserUI(); // Ensure user UI is updated after page render
 
-        // Check if we need to scroll to top after navigation to create-story page
-        if (isToCreateStoryTransition && sessionStorage.getItem('scrollToTopAfterCreateStory') === 'true') {
-          // Add a small delay to ensure the page is fully rendered
-          setTimeout(() => {
-            window.scrollTo({
-              top: 0,
-              behavior: 'smooth'
-            });
-            // Clear the flag
-            sessionStorage.removeItem('scrollToTopAfterCreateStory');
-          }, 100);
-        }
+
       }
 
       // Store the current route for next navigation
