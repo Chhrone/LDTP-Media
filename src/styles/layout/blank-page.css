@@ -1,0 +1,10 @@
+/* Blank Page Styles */
+.blank-page {
+  min-height: 400px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--light-beige);
+  border-radius: 8px;
+  margin: 20px 0;
+}

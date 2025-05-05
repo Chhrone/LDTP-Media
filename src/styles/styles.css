@@ -1,0 +1,37 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+/* Base styles */
+@import url('./base/reset.css');
+@import url('./base/colors.css');
+@import url('./base/scrollbar.css');
+
+/* Component styles */
+@import url('./components/loading.css');
+@import url('./components/buttons.css');
+@import url('./components/forms.css');
+@import url('./components/hero.css');
+@import url('./components/story-card.css');
+@import url('./components/pagination.css');
+@import url('./components/map.css');
+
+/* Layout styles */
+@import url('./layout/layout.css');
+@import url('./layout/blank-page.css');
+
+/* Page styles */
+@import url('./pages/home-view.css');
+@import url('./pages/about-view.css');
+@import url('./pages/settings-view.css');
+@import url('./pages/create-story-view.css');
+@import url('./pages/detail-story-view.css');
+@import url('./pages/auth.css');
+
+/* Utility styles */
+@import url('./utils/accessibility.css');
+@import url('./utils/helpers.css');
+@import url('./utils/animations.css');
+@import url('./utils/view-transitions.css');
+@import url('./utils/login-transitions.css');
+@import url('./utils/page-transitions.css');
+@import url('./utils/create-story-transitions.css');
+

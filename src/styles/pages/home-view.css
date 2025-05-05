@@ -1,0 +1,6 @@
+/* Home Page Styles */
+@import url('../base/colors.css');
+@import url('../components/hero.css');
+@import url('../components/story-card.css');
+@import url('../components/pagination.css');
+@import url('../components/map.css');

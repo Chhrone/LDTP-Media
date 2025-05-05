@@ -1,0 +1,29 @@
+/* Login to Home Transitions CSS */
+
+/* Login to Home Transitions */
+
+/* Custom transitions for login-to-home */
+@media (prefers-reduced-motion: no-preference) {
+  ::view-transition-old(root) {
+    animation: 300ms cubic-bezier(0.4, 0, 0.2, 1) both fade-out;
+  }
+
+  ::view-transition-new(root) {
+    animation: 300ms cubic-bezier(0.4, 0, 0.2, 1) both fade-in;
+  }
+
+  /* Login card transition */
+  ::view-transition-old(login-card) {
+    animation: 400ms cubic-bezier(0.4, 0, 0.2, 1) both zoom-out;
+  }
+
+  /* Hero section transition */
+  ::view-transition-new(hero-section) {
+    animation: 500ms cubic-bezier(0.4, 0, 0.2, 1) both zoom-in;
+  }
+
+  /* Story list transition */
+  ::view-transition-new(story-list) {
+    animation: 600ms cubic-bezier(0.4, 0, 0.2, 1) both slide-in;
+  }
+}

@@ -1,0 +1,114 @@
+/* View Transitions CSS */
+
+/* Enable view transitions for navigation */
+@view-transition {
+  navigation: auto;
+}
+
+/* Ensure header always stays on top during transitions */
+::view-transition-group(site-header) {
+  z-index: 9999 !important;
+}
+
+::view-transition-old(site-header),
+::view-transition-new(site-header) {
+  /* Prevent any animations on the header */
+  animation: none !important;
+  /* Ensure header is always visible */
+  opacity: 1 !important;
+}
+
+/* Ensure navigation drawer always stays on top during transitions */
+::view-transition-group(site-nav) {
+  z-index: 9999 !important;
+}
+
+::view-transition-old(site-nav),
+::view-transition-new(site-nav) {
+  /* Prevent any animations on the navigation drawer */
+  animation: none !important;
+}
+
+/* Ensure skip-to-content link always stays on top during transitions */
+::view-transition-group(skip-link) {
+  z-index: 10000 !important;
+}
+
+::view-transition-old(skip-link),
+::view-transition-new(skip-link) {
+  /* Prevent any animations on the skip link */
+  animation: none !important;
+}
+
+/* Ensure FAB buttons always stay on top during transitions */
+::view-transition-group(create-fab),
+::view-transition-group(back-to-top-fab) {
+  z-index: 9000 !important;
+}
+
+::view-transition-old(create-fab),
+::view-transition-new(create-fab),
+::view-transition-old(back-to-top-fab),
+::view-transition-new(back-to-top-fab) {
+  /* Allow animations on FAB buttons but ensure they stay on top */
+  z-index: 9000 !important;
+}
+
+/* Ensure footer stays at the bottom during transitions */
+::view-transition-group(site-footer) {
+  z-index: 1 !important;
+}
+
+::view-transition-old(site-footer),
+::view-transition-new(site-footer) {
+  /* Prevent any animations on the footer */
+  animation: none !important;
+}
+
+/* Apply view-transition-name to story cards and their detail views */
+@media not (prefers-reduced-motion: reduce) {
+
+  /* Custom animations for story elements */
+  /* These selectors will match any view-transition-name that starts with the specified prefix */
+
+  /* Ensure image transitions have higher z-index to stay above containers */
+  ::view-transition-group(story-image-) {
+    z-index: 10;
+  }
+
+  ::view-transition-old(story-image-) {
+    animation: fade-out 0.3s ease-out forwards;
+    z-index: 10;
+  }
+
+  ::view-transition-new(story-image-) {
+    animation: fade-in 0.5s ease-out forwards;
+    z-index: 10;
+  }
+
+  ::view-transition-old(story-title-) {
+    animation: slide-out 0.3s ease-out forwards;
+  }
+
+  ::view-transition-new(story-title-) {
+    animation: slide-in 0.5s ease-out forwards;
+  }
+
+  ::view-transition-old(story-description-) {
+    animation: slide-out 0.3s ease-out forwards;
+  }
+
+  ::view-transition-new(story-description-) {
+    animation: slide-in 0.5s ease-out forwards;
+  }
+}
+
+
+
+/* Special rule for detail-to-home transition to fix container overlap issue */
+@media (prefers-reduced-motion: no-preference) {
+  /* This ensures proper stacking during detail-to-home transitions */
+  ::view-transition-group(story-image-) {
+    isolation: isolate;
+  }
+}

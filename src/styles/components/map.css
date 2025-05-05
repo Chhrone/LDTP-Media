@@ -1,0 +1,237 @@
+/* Map Component Styles */
+
+.map-section {
+  margin: 40px 0;
+}
+
+.map-section h2 {
+  margin-bottom: 20px;
+}
+
+.map-container {
+  height: 500px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.map-message {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 15px 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  text-align: center;
+  max-width: 80%;
+  font-size: 1rem;
+  color: var(--dark-brown);
+}
+
+.map-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.map-style-controls {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.map-style-button {
+  padding: 8px 16px;
+  background-color: var(--cream);
+  border: 1px solid var(--orange-accent);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.map-style-button:hover {
+  background-color: var(--light-orange);
+  color: var(--text-light);
+}
+
+.map-style-button.active {
+  background-color: var(--orange-accent);
+  color: var(--text-light);
+}
+
+.locate-me-button {
+  padding: 8px 16px;
+  background-color: var(--cream);
+  border: 1px solid var(--orange-accent);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.locate-me-button:hover {
+  background-color: var(--light-orange);
+  color: var(--text-light);
+}
+
+.locate-me-button.loading {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+.locate-me-button.loading i {
+  animation: spin 1s linear infinite;
+}
+
+.locate-me-button[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.user-location-marker {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.user-location-marker i {
+  font-size: 30px;
+  color: var(--orange-accent);
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.8), 0 0 10px rgba(255, 255, 255, 0.5);
+  animation: pulse 2s infinite;
+}
+
+.map-zoom-info {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  transition: opacity 1s ease;
+}
+
+.map-zoom-info i {
+  color: var(--orange-accent);
+}
+
+.map-zoom-info.fade-out,
+.map-notification.fade-out {
+  opacity: 0;
+}
+
+.map-notification {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 10px 16px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  transition: opacity 0.5s ease;
+  max-width: 80%;
+}
+
+.map-notification-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.map-notification i {
+  color: var(--orange-accent);
+  font-size: 1.1rem;
+}
+
+.locate-me-button i {
+  color: var(--orange-accent);
+}
+
+.locate-me-button:hover i {
+  color: var(--text-light);
+}
+
+.leaflet-popup-content {
+  font-family: 'Inter', sans-serif;
+}
+
+.map-popup-content {
+  width: 220px;
+}
+
+.map-popup-title {
+  font-weight: bold;
+  font-size: 1rem;
+  margin-bottom: 5px;
+  color: var(--dark-brown);
+}
+
+.map-popup-location {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.85rem;
+  margin-bottom: 8px;
+  color: var(--medium-brown);
+}
+
+.map-popup-location i {
+  color: var(--orange-accent);
+}
+
+.map-popup-link {
+  display: inline-block;
+  margin-top: 5px;
+  color: var(--orange-accent);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.map-popup-link:hover {
+  text-decoration: underline;
+}
+
+/* Responsive styles for map */
+@media screen and (max-width: 768px) {
+  .map-container {
+    height: 350px;
+  }
+
+  .map-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 15px;
+  }
+
+  .map-style-controls {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+  }
+}

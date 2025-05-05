@@ -1,0 +1,17 @@
+:root {
+  /* Main Color Palette */
+  --dark-brown: #2F2925;        /* Dark brown for text and backgrounds */
+  --medium-brown: #37312E;      /* Medium brown for secondary elements */
+  --warm-brown: #453325;        /* Warm brown for accents */
+  --deep-brown: #282221;        /* Deep brown for dark areas */
+  --orange-accent: #D48944;     /* Orange accent for highlights and CTAs */
+
+  /* Complementary Colors */
+  --light-beige: #F5EFE7;       /* Light beige for backgrounds */
+  --cream: #E8DCCA;             /* Cream for subtle backgrounds */
+  --light-orange: #E6A96B;      /* Lighter orange for hover states */
+  --dark-orange: #B06B2A;       /* Darker orange for pressed states */
+  --text-light: #F8F5F2;        /* Light text color */
+  --text-dark: #1E1B19;         /* Dark text color */
+  --overlay: rgba(40, 34, 33, 0.7); /* Overlay for modals and drawers */
+}

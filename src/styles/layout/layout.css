@@ -1,0 +1,269 @@
+/* Layout Styles */
+
+.container {
+  padding-inline: 32px;
+  margin-inline: auto;
+  max-width: 1460px
+}
+
+header {
+  background-color: var(--dark-brown);
+  position: sticky;
+  top: 0;
+  z-index: 9999;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.main-header {
+  min-height: 60px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 30px;
+}
+
+.nav-container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-left: auto;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.brand-name {
+  font-size: 1.125rem;
+  font-weight: bold;
+  text-decoration: none;
+  color: var(--orange-accent);
+}
+
+.navigation-drawer {
+  min-height: 100vh;
+  width: 200px;
+  padding: 20px 10px;
+  background-color: var(--medium-brown);
+  color: var(--text-light);
+
+  position: fixed;
+  inset-block-start: 0;
+  inset-inline-end: 0;
+
+  box-shadow: 0 0 4px 2px rgba(0, 0, 0, 0.3);
+  transform: translateX(100%);
+  transition: transform 350ms;
+
+  z-index: 9999;
+}
+
+.navigation-drawer.open {
+  transform: translateX(0);
+}
+
+.drawer-button {
+  padding: 8px;
+  border: 0;
+  border-radius: 4px;
+
+  display: inline-block;
+  background-color: transparent;
+
+  font-weight: bold;
+  font-size: 28px;
+  color: var(--orange-accent);
+
+  cursor: pointer;
+}
+
+.nav-list {
+  list-style: none;
+
+  display: flex;
+  flex-direction: column;
+  gap: 10px 20px;
+}
+
+.nav-list li a {
+  padding: 6px 10px;
+  display: block;
+  color: var(--text-light);
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.nav-list li a:hover {
+  color: var(--orange-accent);
+  text-decoration: none;
+}
+
+/* MAIN */
+.main-content {
+  flex: 1; 
+}
+
+/* Container Styles */
+.container-fluid {
+  width: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+/* Drawer Divider */
+.drawer-divider {
+  height: 1px;
+  background-color: var(--dark-orange);
+  margin: 15px 0;
+  width: 100%;
+}
+
+/* Username Dropdown */
+.user-dropdown {
+  position: relative;
+  display: block;
+  margin-top: 10px;
+  width: 100%;
+}
+
+.user-button {
+  background-color: transparent;
+  color: var(--text-light);
+  padding: 10px;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  text-align: left;
+  justify-content: space-between;
+}
+
+.user-button i {
+  font-size: 14px;
+  transition: transform 0.3s ease;
+}
+
+.user-button:hover {
+  background-color: var(--warm-brown);
+}
+
+.user-button i.rotated {
+  transform: rotate(180deg);
+}
+
+.dropdown-content {
+  display: none;
+  width: 100%;
+  background-color: var(--deep-brown);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-top: 5px;
+}
+
+.dropdown-content a {
+  color: var(--text-light);
+  padding: 10px;
+  text-decoration: none;
+  display: block;
+  transition: background-color 0.2s;
+}
+
+.dropdown-content a:hover {
+  background-color: var(--warm-brown);
+  color: var(--orange-accent);
+}
+
+.dropdown-content.show {
+  display: block;
+}
+
+/* Footer Styles */
+.footer {
+  background-color: var(--deep-brown);
+  color: var(--text-light);
+  padding: 25px 0;
+  margin-top: 40px;
+}
+
+.footer-simple {
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+.footer-simple p {
+  line-height: 1.5;
+}
+
+/* Responsive Layout */
+@media screen and (width > 1000px) {
+  .nav-container {
+    position: relative;
+    z-index: 1;
+  }
+
+  .navigation-drawer {
+    min-height: auto;
+    width: auto;
+    padding: 0;
+    background-color: transparent;
+    color: var(--text-dark);
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+
+    position: static;
+    box-shadow: none;
+    transform: translateX(0);
+  }
+
+  .nav-list {
+    flex-direction: row;
+    margin-right: 20px;
+  }
+
+  .nav-list li a {
+    display: inline-block;
+    color: var(--orange-accent);
+  }
+
+  .nav-list li a:hover {
+    color: var(--light-orange);
+  }
+
+  .drawer-divider {
+    display: none;
+  }
+
+  .user-dropdown {
+    width: auto;
+    margin-top: 0;
+  }
+
+  .user-button {
+    width: auto;
+    padding: 8px 16px;
+  }
+
+  .dropdown-content {
+    position: absolute;
+    right: 0;
+    width: 180px;
+    background-color: var(--deep-brown);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  }
+
+  .user-button {
+    color: var(--orange-accent);
+  }
+
+  .drawer-button {
+    display: none;
+  }
+}

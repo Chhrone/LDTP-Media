@@ -1,0 +1,16 @@
+/* Helper Utility Classes */
+
+.text-center {
+  text-align: center;
+  padding: 20px;
+  color: var(--medium-brown);
+}
+
+.error-container {
+  text-align: center;
+  padding: 40px 0;
+}
+
+.error-container h2 {
+  margin-bottom: 20px;
+}

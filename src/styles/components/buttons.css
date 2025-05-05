@@ -1,0 +1,83 @@
+/* Button Styles */
+
+.btn {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: var(--orange-accent);
+  color: var(--text-light);
+  text-decoration: none;
+  border-radius: 4px;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.btn:hover {
+  background-color: var(--light-orange);
+}
+
+.btn-small {
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  border-radius: 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.2s ease;
+}
+
+.btn-small:hover {
+  transform: translateX(3px);
+}
+
+/* FAB Button */
+.fab {
+  position: fixed;
+  right: 30px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: var(--orange-accent);
+  color: var(--text-light);
+  display: flex; 
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  text-decoration: none;
+  z-index: 1000;
+  transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
+}
+
+.create-story-fab {
+  bottom: 30px;
+}
+
+.fab:hover {
+  background-color: var(--light-orange);
+  transform: scale(1.1);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+}
+
+.fab i {
+  font-size: 20px;
+}
+
+/* Back to Top Button */
+.back-to-top {
+  bottom: 100px;
+  cursor: pointer;
+  border: none;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(20px);
+  transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease, background-color 0.3s ease;
+  /* Ensure the button doesn't show during transitions */
+  will-change: opacity, transform, visibility;
+}
+
+.back-to-top.visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}

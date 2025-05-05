@@ -1,0 +1,80 @@
+/* Pagination Component Styles */
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: 40px;
+  gap: 8px;
+}
+
+.pagination-link {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: transparent;
+  color: var(--dark-brown);
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+  outline: none;
+}
+
+.pagination-link:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(212, 137, 68, 0.3);
+}
+
+.pagination-link:focus:not(:focus-visible) {
+  outline: none;
+  box-shadow: none;
+}
+
+.pagination-link:hover:not(.disabled):not(.active) {
+  background-color: var(--light-orange);
+  color: var(--text-light);
+}
+
+.pagination-link.active {
+  background-color: var(--orange-accent);
+  color: var(--text-light);
+  border-color: var(--orange-accent);
+}
+
+.pagination-link.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pagination-prev, .pagination-next, .pagination-first, .pagination-last {
+  font-weight: bold;
+  border: none;
+  color: var(--orange-accent);
+  outline: none;
+}
+
+.pagination-link i {
+  font-size: 1rem;
+}
+
+/* Responsive styles for pagination */
+@media screen and (max-width: 768px) {
+  .pagination {
+    gap: 4px;
+  }
+
+  .pagination-link {
+    width: 36px;
+    height: 36px;
+    font-size: 0.9rem;
+  }
+  
+  .pagination-first, .pagination-last {
+    font-size: 0.9rem;
+  }
+}
