@@ -68,7 +68,7 @@ class HomeView {
               <button class="map-style-button active" data-style="streets">Streets</button>
               <button class="map-style-button" data-style="outdoor">Outdoor</button>
               <button class="map-style-button" data-style="aquarelle">Aquarelle</button>
-              <button class="map-style-button" data-style="vintage">Vintage</button>
+              <button class="map-style-button" data-style="bright">Bright</button>
               <button class="map-style-button" data-style="dark">Dark</button>
             </div>
             <button id="locate-me-button" class="locate-me-button">

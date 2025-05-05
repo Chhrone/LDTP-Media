@@ -94,7 +94,7 @@ class CreateStoryView {
                     <option value="streets" selected>Streets</option>
                     <option value="outdoor">Outdoor</option>
                     <option value="aquarelle">Aquarelle</option>
-                    <option value="vintage">Vintage</option>
+                    <option value="bright">Bright</option>
                     <option value="dark">Dark</option>
                   </select>
                 </div>

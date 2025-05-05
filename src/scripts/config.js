@@ -10,7 +10,7 @@ const CONFIG = {
     streets: 'streets-v2',
     outdoor: 'outdoor-v2',
     aquarelle: 'winter',
-    vintage: 'vintage',
+    bright: 'bright-v2',
     dark: 'dataviz-dark'
   }
 };
