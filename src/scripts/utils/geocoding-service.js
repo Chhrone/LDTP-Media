@@ -1,11 +1,6 @@
 import CONFIG from '../config';
 
-/**
- * Reverse geocode a latitude and longitude to get subregion and country
- * @param {number} lat - Latitude
- * @param {number} lon - Longitude
- * @returns {Promise<Object>} - Location information with subregion and country
- */
+// Mengubah koordinat menjadi informasi lokasi (subregion dan country)
 async function reverseGeocode(lat, lon) {
   try {
     if (!lat || !lon) {
@@ -47,12 +42,7 @@ async function reverseGeocode(lat, lon) {
   }
 }
 
-/**
- * Get location string in the format "Subregion, Country"
- * @param {number} lat - Latitude
- * @param {number} lon - Longitude
- * @returns {Promise<string>} - Formatted location string
- */
+// Mendapatkan string lokasi dalam format "Subregion, Country"
 async function getLocationString(lat, lon) {
   try {
     const { subregion, country, error } = await reverseGeocode(lat, lon);

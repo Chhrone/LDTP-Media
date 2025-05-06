@@ -1,11 +1,17 @@
+// Konfigurasi aplikasi
 const CONFIG = {
+  // API dan autentikasi
   BASE_URL: 'https://story-api.dicoding.dev/v1',
   KEY_TOKEN: 'user-token',
   KEY_USER: 'user-data',
-  MAPTILER_KEY: 'DZu1rZPAffLH8pjXp8sd', // MapTiler API key
-  DEFAULT_CENTER: [0, 0], // Default map center coordinates
-  DEFAULT_ZOOM: 2, // Default map zoom level
-  MAP_STYLE: 'streets-v2', // Default map style
+
+  // Konfigurasi peta
+  MAPTILER_KEY: 'DZu1rZPAffLH8pjXp8sd',
+  DEFAULT_CENTER: [0, 0],
+  DEFAULT_ZOOM: 2,
+  MAP_STYLE: 'streets-v2',
+
+  // Gaya peta yang tersedia
   MAP_STYLES: {
     streets: 'streets-v2',
     outdoor: 'outdoor-v2',

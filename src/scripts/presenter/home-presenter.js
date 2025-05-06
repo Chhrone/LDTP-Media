@@ -2,7 +2,8 @@ import HomeModel from '../models/home-model';
 import HomeView from '../views/home-view';
 import AuthHelper from '../utils/auth-helper';
 import { parseActivePathname } from '../routes/url-parser';
-import { getLocationString } from '../utils/geocoding-service';
+import MapUtilities from '../utils/map-utilities';
+import NavigationUtilities from '../utils/navigation-utilities';
 import CONFIG from '../config';
 
 class HomePage {
@@ -23,19 +24,23 @@ class HomePage {
     };
   }
 
+  /**
+   * Renders the home page template
+   * @returns {string} The HTML template
+   */
   async render() {
-    // Check if user is logged in, redirect to login if not
     if (!AuthHelper.checkAuth()) {
       return '';
     }
 
-    // Get page from URL using the parseActivePathname function
     const { page } = parseActivePathname();
     if (page && !isNaN(parseInt(page, 10))) {
       this._currentPage = parseInt(page, 10);
     } else {
       this._currentPage = 1;
     }
+
+    sessionStorage.setItem('lastViewedPage', this._currentPage.toString());
 
     try {
       const data = await this._model.getHomeData(this._currentPage);
@@ -46,52 +51,45 @@ class HomePage {
     }
   }
 
+  /**
+   * Initializes components after the page is rendered
+   */
   async afterRender() {
     this._initPaginationEvents();
     await this._initMap();
     this._initMapStyleControls();
     this._initLocateMeButton();
     this._initHeroCTAEvents();
-    console.log('Home page rendered with pagination and map');
+
+    NavigationUtilities.handleReturnToStory(this._currentPage);
   }
 
+
+
+  /**
+   * Initializes hero section call-to-action buttons
+   */
   _initHeroCTAEvents() {
-    // Add smooth scrolling for the "Explore Map" button
-    const exploreMapBtn = document.querySelector('.hero-btn-secondary');
-    if (exploreMapBtn) {
-      exploreMapBtn.addEventListener('click', (event) => {
-        event.preventDefault();
-        const mapSection = document.getElementById('map-section');
-        if (mapSection) {
-          mapSection.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start'
-          });
-        }
-      });
-    }
-
-
+    NavigationUtilities.setupSmoothScrolling('.hero-btn-secondary', '#map-section');
   }
 
+  /**
+   * Initializes the locate me button functionality
+   */
   _initLocateMeButton() {
     const locateButton = document.getElementById('locate-me-button');
     if (!locateButton) return;
 
     locateButton.addEventListener('click', async () => {
-      // Check if geolocation is available
       if (!navigator.geolocation) {
-        // Show a notification in the map container instead of an alert
-        this._showMapNotification('Location services are not supported by your browser');
+        MapUtilities.showMapNotification('Location services are not supported by your browser', 'map-container');
         return;
       }
 
-      // Show loading state
       locateButton.classList.add('loading');
       locateButton.innerHTML = '<i class="fas fa-spinner"></i> Locating...';
 
       try {
-        // Request user location directly without confirmation dialog
         const position = await new Promise((resolve, reject) => {
           navigator.geolocation.getCurrentPosition(resolve, reject, {
             enableHighAccuracy: true,
@@ -102,48 +100,19 @@ class HomePage {
 
         const { latitude, longitude } = position.coords;
 
-        // Create user location marker with custom icon if not exists
         if (this._map) {
-          // Remove previous user location marker if exists
-          if (this._userLocationMarker) {
-            this._map.removeLayer(this._userLocationMarker);
-          }
+          this._userLocationMarker = await MapUtilities.createUserLocationMarker(
+            this._map,
+            latitude,
+            longitude,
+            this._userLocationMarker
+          );
 
-          // Create custom icon for user location
-          const userIcon = L.divIcon({
-            className: 'user-location-marker',
-            html: '<i class="fas fa-user-circle"></i>',
-            iconSize: [30, 30],
-            iconAnchor: [15, 15]
-          });
-
-          // Add user location marker
-          this._userLocationMarker = L.marker([latitude, longitude], { icon: userIcon }).addTo(this._map);
-
-          // Get location string from geocoding service
-          try {
-            const locationString = await getLocationString(latitude, longitude);
-            const popupContent = `
-              <div class="map-popup-content">
-                <div class="map-popup-title">Your Location</div>
-                <div class="map-popup-location">
-                  <i class="fas fa-map-marker-alt"></i> ${locationString}
-                </div>
-              </div>
-            `;
-            this._userLocationMarker.bindPopup(popupContent);
-          } catch (error) {
-            console.error('Error getting location string:', error);
-            this._userLocationMarker.bindPopup('<div class="map-popup-content"><div class="map-popup-title">Your Location</div></div>');
-          }
-
-          // Fly to user location
           this._map.flyTo([latitude, longitude], 13, {
             animate: true,
             duration: 1.5
           });
 
-          // Open popup after flying
           setTimeout(() => {
             this._userLocationMarker.openPopup();
           }, 1600);
@@ -151,62 +120,27 @@ class HomePage {
       } catch (error) {
         console.error('Error getting location:', error);
 
-        // Handle specific error cases
         if (error.code === 1) {
-          // Permission denied
-          this._showMapNotification('Please enable location services in your browser to use this feature');
+          MapUtilities.showMapNotification('Please enable location services in your browser to use this feature', 'map-container');
         } else if (error.code === 2) {
-          // Position unavailable
-          this._showMapNotification('Unable to determine your location. Please try again later');
+          MapUtilities.showMapNotification('Unable to determine your location. Please try again later', 'map-container');
         } else if (error.code === 3) {
-          // Timeout
-          this._showMapNotification('Location request timed out. Please try again');
+          MapUtilities.showMapNotification('Location request timed out. Please try again', 'map-container');
         } else {
-          // Generic error
-          this._showMapNotification('Unable to access your location');
+          MapUtilities.showMapNotification('Unable to access your location', 'map-container');
         }
       } finally {
-        // Always reset button state
         locateButton.classList.remove('loading');
         locateButton.innerHTML = '<i class="fas fa-location-arrow"></i> Locate Me';
       }
     });
   }
 
-  _showMapNotification(message) {
-    // Create notification element
-    const notification = document.createElement('div');
-    notification.className = 'map-notification';
-    notification.innerHTML = `
-      <div class="map-notification-content">
-        <i class="fas fa-info-circle"></i>
-        <span>${message}</span>
-      </div>
-    `;
 
-    // Add to map container
-    const mapContainer = document.getElementById('map-container');
-    if (mapContainer) {
-      // Remove any existing notifications
-      const existingNotification = mapContainer.querySelector('.map-notification');
-      if (existingNotification) {
-        existingNotification.remove();
-      }
 
-      mapContainer.appendChild(notification);
-
-      // Auto-remove after 5 seconds
-      setTimeout(() => {
-        notification.classList.add('fade-out');
-        setTimeout(() => {
-          if (notification.parentNode) {
-            notification.remove();
-          }
-        }, 500);
-      }, 5000);
-    }
-  }
-
+  /**
+   * Initializes the map with story markers
+   */
   async _initMap() {
     try {
       const mapContainer = document.getElementById('map-container');
@@ -219,46 +153,27 @@ class HomePage {
       // Filter stories with location data for the map
       const storiesWithLocation = stories.filter(story => story.lat && story.lon);
 
-      // We still initialize the map even if there are no stories with location
+      // Show message if no stories have location data
       if (storiesWithLocation.length === 0) {
-        // Just show a message in the map container but still initialize the map
         const messageElement = document.createElement('div');
         messageElement.className = 'map-message';
         messageElement.innerHTML = '<p>No location data available for stories on this page.</p>';
         mapContainer.appendChild(messageElement);
-      } else {
-        console.log(`Found ${storiesWithLocation.length} stories with location data out of ${stories.length} total stories`);
       }
 
-      // Initialize the map
+      // Initialize the map using MapUtilities
       maptilersdk.config.apiKey = CONFIG.MAPTILER_KEY;
 
-      // Create the map
-      this._map = new L.Map('map-container', {
-        center: [0, 0],
-        zoom: 2,
-        scrollWheelZoom: true // Enable scroll zoom by default
+      const { map, markers } = MapUtilities.initializeMap({
+        containerId: 'map-container',
+        config: CONFIG,
+        currentStyle: this._currentMapStyle,
+        mapStyles: this._mapStyles,
+        stories: storiesWithLocation
       });
 
-      // Add the base tile layer
-      L.tileLayer(`https://api.maptiler.com/maps/${this._mapStyles[this._currentMapStyle]}/256/{z}/{x}/{y}.png?key=${CONFIG.MAPTILER_KEY}`, {
-        attribution: '&copy; <a href="https://www.maptiler.com/">MapTiler</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-        maxZoom: 18
-      }).addTo(this._map);
-
-      // Add markers for each story with location
-      this._addMarkers(storiesWithLocation);
-
-      // Fit the map to show all markers
-      if (this._markers.length > 0) {
-        const group = new L.featureGroup(this._markers);
-        this._map.fitBounds(group.getBounds().pad(0.1));
-      }
-
-      // Add a zoom control with buttons
-      L.control.zoom({
-        position: 'bottomright'
-      }).addTo(this._map);
+      this._map = map;
+      this._markers = markers;
 
       // Add a message to inform users about scroll zoom
       const zoomInfoElement = document.createElement('div');
@@ -283,94 +198,53 @@ class HomePage {
     }
   }
 
-  _addMarkers(stories) {
-    // Clear existing markers
-    if (this._markers.length > 0) {
-      this._markers.forEach(marker => this._map.removeLayer(marker));
-      this._markers = [];
-    }
 
-    // Add new markers
-    stories.forEach(story => {
-      if (story.lat && story.lon) {
-        const marker = L.marker([story.lat, story.lon]).addTo(this._map);
 
-        // Create popup content
-        const popupContent = `
-          <div class="map-popup-content">
-            <div class="map-popup-title">${story.title}</div>
-            ${story.location ? `
-              <div class="map-popup-location">
-                <i class="fas fa-map-marker-alt"></i> ${story.location}
-              </div>
-            ` : ''}
-            <a href="#/story/${story.id}" class="map-popup-link">Read Story</a>
-          </div>
-        `;
-
-        marker.bindPopup(popupContent);
-        this._markers.push(marker);
-      }
-    });
-  }
-
+  /**
+   * Initializes map style control buttons
+   */
   _initMapStyleControls() {
     const styleButtons = document.querySelectorAll('.map-style-button');
 
     styleButtons.forEach(button => {
       button.addEventListener('click', () => {
-        // Skip if already active
         if (button.classList.contains('active')) return;
 
-        // Update active button
         styleButtons.forEach(btn => btn.classList.remove('active'));
         button.classList.add('active');
 
-        // Get the selected style
         const style = button.dataset.style;
         this._currentMapStyle = style;
 
-        // Update the map style
         if (this._map) {
-          // Remove current tile layer
-          this._map.eachLayer(layer => {
-            if (layer instanceof L.TileLayer) {
-              this._map.removeLayer(layer);
-            }
-          });
-
-          // Add new tile layer
-          L.tileLayer(`https://api.maptiler.com/maps/${this._mapStyles[style]}/256/{z}/{x}/{y}.png?key=${CONFIG.MAPTILER_KEY}`, {
-            attribution: '&copy; <a href="https://www.maptiler.com/">MapTiler</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-            maxZoom: 18
-          }).addTo(this._map);
+          MapUtilities.updateMapStyle(
+            this._map,
+            style,
+            this._mapStyles,
+            CONFIG.MAPTILER_KEY
+          );
         }
       });
     });
   }
 
+  /**
+   * Initializes pagination links with event handlers
+   */
   _initPaginationEvents() {
-    const paginationLinks = document.querySelectorAll('.pagination-link');
-
-    paginationLinks.forEach(link => {
-      link.addEventListener('click', (event) => {
-        event.preventDefault();
-        const page = parseInt(link.dataset.page, 10);
-
-        if (page !== this._currentPage) {
-          // Clean up map before navigation
-          if (this._map) {
-            this._map.remove();
-            this._map = null;
-            this._markers = [];
-            this._userLocationMarker = null;
-          }
-
-          // Proper SPA navigation - change hash and let the router handle it
-          window.location.hash = `/page/${page}`;
-          // No need to call _refreshPage as the hashchange event will trigger app.renderPage()
+    NavigationUtilities.setupPaginationLinks((page) => {
+      if (page !== this._currentPage) {
+        // Clean up map before navigation
+        if (this._map) {
+          this._map.remove();
+          this._map = null;
+          this._markers = [];
+          this._userLocationMarker = null;
         }
-      });
+
+        // Navigate to the new page
+        window.location.hash = `/page/${page}`;
+      }
     });
   }
 }

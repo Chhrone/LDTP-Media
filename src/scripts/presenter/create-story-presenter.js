@@ -53,7 +53,6 @@ class CreateStoryPage {
       this._stopCamera();
     });
 
-    // Use a named function for the hashchange event so we can remove it later
     this._hashChangeHandler = () => {
       console.log('hashchange event - stopping camera');
       this._stopCamera();
@@ -61,9 +60,8 @@ class CreateStoryPage {
 
     window.addEventListener('hashchange', this._hashChangeHandler);
 
-    // Also add a cleanup method to be called when the component is destroyed
+    // Also add a cleanup method 
     document.addEventListener('DOMContentLoaded', () => {
-      // This ensures the camera is stopped when the page is reloaded or closed
       window.addEventListener('unload', () => {
         console.log('unload event - stopping camera');
         this._stopCamera();
@@ -102,7 +100,6 @@ class CreateStoryPage {
       // Check if the image is large and might need compression
       const photoFile = formData.get('photo');
       if (photoFile && photoFile instanceof File && photoFile.size > 900 * 1024) {
-        // Show compression notification
         Swal.fire({
           title: 'Processing Image',
           text: 'Your image is being compressed to meet size requirements...',
@@ -133,7 +130,6 @@ class CreateStoryPage {
         icon: 'success',
         confirmButtonText: 'Go to Home'
       }).then(() => {
-        // Navigate to home page
         window.location.hash = '#/';
       });
     } catch (error) {
@@ -141,7 +137,6 @@ class CreateStoryPage {
 
       // Check if it's a payload size error
       if (error.message && error.message.includes('Payload content length greater than maximum allowed')) {
-        // Show specific error message for large files
         Swal.fire({
           title: 'Image Too Large',
           text: 'Your image exceeds the maximum allowed size (1MB). Please try again with a smaller image or use the built-in camera which automatically compresses images.',
@@ -149,7 +144,6 @@ class CreateStoryPage {
           confirmButtonText: 'OK'
         });
       } else {
-        // Show generic error message
         Swal.fire({
           title: 'Error',
           text: error.message || 'Failed to upload story. Please try again.',
@@ -170,12 +164,10 @@ class CreateStoryPage {
   // Method to clean up resources when the page is destroyed
   destroy() {
     console.log('Destroying create-story-presenter');
-    // Remove event listeners
     if (this._hashChangeHandler) {
       window.removeEventListener('hashchange', this._hashChangeHandler);
     }
 
-    // Stop the camera
     this._stopCamera();
   }
 }

@@ -1,9 +1,10 @@
 
-
+/**
+ * Polyfill for :focus-visible CSS pseudo-class
+ * Adds keyboard focus styles only when using keyboard navigation
+ */
 (function() {
-
   if (typeof document !== 'undefined' && 'querySelector' in document && 'classList' in document.documentElement) {
-
     const hasFocusVisible = () => {
       try {
         document.querySelector(':focus-visible');
@@ -13,21 +14,17 @@
       }
     };
 
-
     if (hasFocusVisible()) {
       return;
     }
-
 
     let hadKeyboardEvent = false;
     let hadFocusVisibleRecently = false;
     let hadFocusVisibleRecentlyTimeout = null;
 
-
     const shouldApplyFocusVisible = (element) => {
       return hadKeyboardEvent || element.getAttribute('data-force-focus-visible');
     };
-
 
     const onFocus = (e) => {
       if (shouldApplyFocusVisible(e.target)) {
@@ -35,7 +32,9 @@
       }
     };
 
-
+    /**
+     * Handles blur events and manages the focus-visible state timeout
+     */
     const onBlur = (e) => {
       if (e.target.classList.contains('focus-visible')) {
         hadFocusVisibleRecently = true;
@@ -48,23 +47,19 @@
       }
     };
 
-
     const onKeyDown = (e) => {
       if (e.key === 'Tab' || (e.key.length === 1 && !e.metaKey && !e.ctrlKey && !e.altKey)) {
         hadKeyboardEvent = true;
       }
     };
 
-
     const onPointerDown = () => {
       hadKeyboardEvent = false;
     };
 
-
     const onWindowBlur = () => {
       hadKeyboardEvent = false;
     };
-
 
     document.addEventListener('keydown', onKeyDown, true);
     document.addEventListener('mousedown', onPointerDown, true);
@@ -73,7 +68,6 @@
     document.addEventListener('focus', onFocus, true);
     document.addEventListener('blur', onBlur, true);
     window.addEventListener('blur', onWindowBlur);
-
 
     const style = document.createElement('style');
     style.textContent = `

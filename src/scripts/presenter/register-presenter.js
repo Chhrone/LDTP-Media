@@ -114,11 +114,7 @@ class RegisterPage {
         if (document.startViewTransition) {
           // Change the hash without reloading
           window.location.hash = '#/';
-
-          // Don't reload the page - the app's hashchange handler will take care of rendering
-          // The view transition will be handled by the app.js renderPage method
         } else {
-          // Fallback for browsers that don't support View Transitions API
           window.location.hash = '#/';
           window.location.reload();
         }
@@ -134,15 +130,12 @@ class RegisterPage {
     // Always start with "Creating your account..."
     this._view.updateLoadingText('Creating your account...');
     await sleep(1500);
-
-    // Remove "Creating your account..." from the array to avoid duplication
     const remainingMessages = this._loadingMessages.filter(msg => msg !== 'Creating your account...');
 
     // Shuffle the remaining loading messages to display them in random order
     const shuffledMessages = shuffleArray(remainingMessages);
     let messageIndex = 0;
 
-    // Update loading message every 1 second
     while (messageIndex < shuffledMessages.length) {
       this._view.updateLoadingText(shuffledMessages[messageIndex]);
       await sleep(1500);

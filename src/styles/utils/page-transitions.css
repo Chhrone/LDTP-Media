@@ -37,7 +37,9 @@
     animation: 300ms cubic-bezier(0.4, 0, 0.2, 1) both slide-in-left;
   }
 
-  ::view-transition-new(home-content) {
+  /* Only apply slide-in animation when NOT coming from a detail page */
+  .from-settings ::view-transition-new(home-content),
+  .from-about ::view-transition-new(home-content) {
     animation: 300ms cubic-bezier(0.4, 0, 0.2, 1) both slide-in-left;
   }
 }

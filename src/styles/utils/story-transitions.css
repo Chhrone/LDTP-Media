@@ -1,0 +1,83 @@
+/* Story Transitions CSS */
+
+/* Story Card to Detail Story Transitions */
+@media (prefers-reduced-motion: no-preference) {
+  /* When returning from detail page, ensure home-content has no animation */
+  .from-detail ::view-transition-new(home-content) {
+    animation: none !important;
+  }
+
+  /* Specific rules for map and pagination sections */
+  ::view-transition-new(map-section),
+  ::view-transition-new(pagination-section) {
+    animation: none !important;
+  }
+
+  /* Ensure map and pagination sections have no animation when returning from detail */
+  .from-detail .map-section,
+  .from-detail .pagination {
+    animation: none !important;
+    opacity: 1 !important;
+  }
+  /* Define the shared element transition for story cards */
+  ::view-transition-group(story-card) {
+    animation-duration: 0.5s;
+  }
+
+  /* When navigating from home to detail */
+  ::view-transition-old(story-card) {
+    animation: 300ms cubic-bezier(0.4, 0, 0.2, 1) both fade-out;
+  }
+
+  ::view-transition-new(story-card) {
+    animation: 300ms cubic-bezier(0.4, 0, 0.2, 1) both zoom-in;
+  }
+
+  /* When navigating from detail to home */
+  ::view-transition-old(detail-story) {
+    animation: 300ms cubic-bezier(0.4, 0, 0.2, 1) both zoom-out;
+  }
+
+  ::view-transition-new(detail-story) {
+    animation: 300ms cubic-bezier(0.4, 0, 0.2, 1) both fade-in;
+  }
+
+  /* Story image transitions */
+  ::view-transition-group(story-image) {
+    animation-duration: 0.5s;
+  }
+
+  ::view-transition-old(story-image) {
+    animation: 300ms cubic-bezier(0.4, 0, 0.2, 1) both fade-out;
+  }
+
+  ::view-transition-new(story-image) {
+    animation: 300ms cubic-bezier(0.4, 0, 0.2, 1) both zoom-in;
+  }
+
+  /* Story title transitions */
+  ::view-transition-group(story-title) {
+    animation-duration: 0.5s;
+  }
+
+  ::view-transition-old(story-title) {
+    animation: 300ms cubic-bezier(0.4, 0, 0.2, 1) both fade-out;
+  }
+
+  ::view-transition-new(story-title) {
+    animation: 300ms cubic-bezier(0.4, 0, 0.2, 1) both fade-in;
+  }
+
+  /* Story content transitions */
+  ::view-transition-group(story-content) {
+    animation-duration: 0.5s;
+  }
+
+  ::view-transition-old(story-content) {
+    animation: 300ms cubic-bezier(0.4, 0, 0.2, 1) both fade-out;
+  }
+
+  ::view-transition-new(story-content) {
+    animation: 300ms cubic-bezier(0.4, 0, 0.2, 1) both fade-in;
+  }
+}

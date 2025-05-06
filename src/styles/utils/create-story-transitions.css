@@ -2,34 +2,23 @@
 
 /* Create Story Transitions */
 
-/* Transitions for create-story page have been removed as requested */
-
-/*
+/* Vertical transitions for create-story page */
 @media (prefers-reduced-motion: no-preference) {
-  When navigating to create-story page
-  ::view-transition-old(create-story-button) {
-    animation: 300ms cubic-bezier(0.4, 0, 0.2, 1) both fade-up;
-  }
-
-  ::view-transition-old(home-content) {
-    animation: 300ms cubic-bezier(0.4, 0, 0.2, 1) both fade-up;
+  /* When navigating to create-story page */
+  ::view-transition-old(home-return) {
+    animation: 300ms cubic-bezier(0.4, 0, 0.2, 1) both fade-out;
   }
 
   ::view-transition-new(create-story-page) {
-    animation: 400ms cubic-bezier(0.4, 0, 0.2, 1) both slide-up;
+    animation: 300ms cubic-bezier(0.4, 0, 0.2, 1) both slide-in-up;
   }
 
-  When returning from create-story page to home
+  /* When returning from create-story page to home */
   ::view-transition-old(create-story-page) {
-    animation: 300ms cubic-bezier(0.4, 0, 0.2, 1) both slide-down;
+    animation: 300ms cubic-bezier(0.4, 0, 0.2, 1) both slide-out-down;
   }
 
-  ::view-transition-new(home-content) {
-    animation: 400ms cubic-bezier(0.4, 0, 0.2, 1) both fade-down;
-  }
-
-  ::view-transition-new(create-story-button) {
-    animation: 400ms cubic-bezier(0.4, 0, 0.2, 1) both fade-down;
+  ::view-transition-new(home-return) {
+    animation: 300ms cubic-bezier(0.4, 0, 0.2, 1) both fade-in;
   }
 }
-*/

@@ -32,7 +32,6 @@ class GuestStoryPage {
     // Initialize camera functionality
     this._cameraController = this._view.initializeCamera();
 
-    // Initialize map functionality
     this._mapController = await this._view.initializeMap(
       this._mapConfig,
       this._handleMapClick.bind(this),
@@ -58,7 +57,6 @@ class GuestStoryPage {
 
     // Also add a cleanup method to be called when the component is destroyed
     document.addEventListener('DOMContentLoaded', () => {
-      // This ensures the camera is stopped when the page is reloaded or closed
       window.addEventListener('unload', () => {
         console.log('unload event - stopping camera');
         this._stopCamera();
@@ -67,20 +65,17 @@ class GuestStoryPage {
   }
 
   _handleMapClick(lat, lng) {
-    // Update hidden inputs
     document.getElementById('lat').value = lat;
     document.getElementById('lon').value = lng;
   }
 
   _handleStyleChange(style, map) {
-    // Remove current tile layer
     map.eachLayer(layer => {
       if (layer instanceof L.TileLayer) {
         map.removeLayer(layer);
       }
     });
 
-    // Add new tile layer
     L.tileLayer(
       `https://api.maptiler.com/maps/${this._mapConfig.mapStyles[style]}/256/{z}/{x}/{y}.png?key=${this._mapConfig.apiKey}`,
       {
@@ -116,7 +111,6 @@ class GuestStoryPage {
         });
       }
 
-      // Submit the story as guest (compression happens in the model)
       await this._model.createGuestStory(formData);
 
       // Show success message
@@ -126,7 +120,6 @@ class GuestStoryPage {
         icon: 'success',
         confirmButtonText: 'Go to Home'
       }).then(() => {
-        // Navigate to home page
         window.location.hash = '#/';
       });
     } catch (error) {
@@ -134,7 +127,6 @@ class GuestStoryPage {
 
       // Check if it's a payload size error
       if (error.message && error.message.includes('Payload content length greater than maximum allowed')) {
-        // Show specific error message for large files
         Swal.fire({
           title: 'Image Too Large',
           text: 'Your image exceeds the maximum allowed size (1MB). Please try again with a smaller image or use the built-in camera which automatically compresses images.',
@@ -163,12 +155,10 @@ class GuestStoryPage {
   // Method to clean up resources when the page is destroyed
   destroy() {
     console.log('Destroying guest-story-presenter');
-    // Remove event listeners
     if (this._hashChangeHandler) {
       window.removeEventListener('hashchange', this._hashChangeHandler);
     }
 
-    // Stop the camera
     this._stopCamera();
   }
 }

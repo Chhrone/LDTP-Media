@@ -16,15 +16,11 @@ class SettingsModel {
 
   async getSettings() {
     try {
-      // Get user settings from localStorage
       const settingsData = localStorage.getItem(this._settingsKey);
 
-      // If settings exist, parse and return them
       if (settingsData) {
         return JSON.parse(settingsData);
       }
-
-      // If no settings exist, return default settings
       return this._defaultSettings;
     } catch (error) {
       console.error('Error getting settings:', error);
@@ -34,13 +30,10 @@ class SettingsModel {
 
   async updateSettings(settings) {
     try {
-      // Merge with default settings to ensure all properties exist
       const updatedSettings = {
         ...this._defaultSettings,
         ...settings
       };
-
-      // Save settings to localStorage
       localStorage.setItem(this._settingsKey, JSON.stringify(updatedSettings));
 
       return {

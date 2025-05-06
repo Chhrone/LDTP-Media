@@ -26,15 +26,15 @@ class HomeView {
 
         <section class="featured-stories">
           <h2>Featured Stories</h2>
-          <div id="stories-list" class="stories-list" style="view-transition-name: story-list">
+          <div id="stories-list" class="stories-list">
             ${featuredStories.map(story => `
-              <article class="story-card" data-story-id="${story.id}">
-                ${story.photo ? `<div class="story-image">
-                  <img src="${story.photo}" alt="${story.title}" loading="lazy" style="view-transition-name: story-image-${story.id}">
+              <article class="story-card" data-story-id="${story.id}" style="view-transition-name: story-card-${story.id}">
+                ${story.photo ? `<div class="story-image" style="view-transition-name: story-image-${story.id}">
+                  <img src="${story.photo}" alt="${story.title}" loading="lazy">
                 </div>` : ''}
-                <div class="story-content">
+                <div class="story-content" style="view-transition-name: story-content-${story.id}">
                   <h3 style="view-transition-name: story-title-${story.id}">${story.title}</h3>
-                  <p style="view-transition-name: story-description-${story.id}">${story.excerpt}</p>
+                  <p>${story.excerpt}</p>
 
                   <div class="story-divider"></div>
 
@@ -49,7 +49,7 @@ class HomeView {
                     </div>
                     <div class="right-info">
                       <div class="story-actions">
-                        <a href="#/story/${story.id}" class="story-action-link">Read More</a>
+                        <a href="#/story/${story.id}" class="story-action-link" data-story-id="${story.id}">Read More</a>
                       </div>
                     </div>
                   </div>
@@ -61,7 +61,7 @@ class HomeView {
           ${this._getPaginationTemplate(pagination)}
         </section>
 
-        <section id="map-section" class="map-section">
+        <section id="map-section" class="map-section" style="view-transition-name: map-section">
           <h2>Story Locations</h2>
           <div class="map-actions">
             <div class="map-style-controls">
@@ -116,7 +116,6 @@ class HomeView {
       startPage = Math.max(1, endPage - 3);
     }
 
-    // Page numbers (only show 4)
     for (let i = startPage; i <= endPage; i++) {
       const isActive = i === currentPage ? 'active' : '';
       paginationLinks += `<a href="#/page/${i}"
@@ -148,7 +147,7 @@ class HomeView {
                         </a>`;
 
     return `
-      <div class="pagination">
+      <div class="pagination" style="view-transition-name: pagination-section">
         ${paginationLinks}
       </div>
     `;

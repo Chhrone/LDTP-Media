@@ -5,6 +5,27 @@
   padding: 20px 0;
   max-width: 800px;
   margin: 0 auto;
+  position: relative;
+}
+
+.back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 15px;
+  background-color: var(--orange-accent);
+  color: var(--text-light);
+  border: none;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: 500;
+  margin-bottom: 15px;
+  transition: all 0.2s ease;
+}
+
+.back-button:hover {
+  background-color: var(--dark-orange);
+  transform: translateX(-5px);
 }
 
 .page-title {

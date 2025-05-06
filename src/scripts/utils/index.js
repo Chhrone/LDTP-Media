@@ -9,8 +9,8 @@ export function showFormattedDate(date, locale = 'en-US', options = {}) {
 
 /**
  * Format date as "4 May 2025"
- * @param {string} dateString - ISO date string
- * @returns {string} - Formatted date
+ * @param {string} dateString
+ * @returns {string}
  */
 export function formatSimpleDate(dateString) {
   const date = new Date(dateString);
@@ -27,8 +27,8 @@ export function sleep(time = 1000) {
 
 /**
  * Shuffles an array using the Fisher-Yates algorithm
- * @param {Array} array The array to shuffle
- * @returns {Array} A new shuffled array
+ * @param {Array} array 
+ * @returns {Array} 
  */
 export function shuffleArray(array) {
   const newArray = [...array];

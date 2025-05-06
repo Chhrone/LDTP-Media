@@ -9,7 +9,6 @@ class DetailStoryModel {
 
   async getStoryById(id) {
     try {
-      // Add location=1 parameter to get location data
       const url = new URL(`${this._baseUrl}/stories/${id}`);
       url.searchParams.append('location', 1);
 
@@ -27,20 +26,18 @@ class DetailStoryModel {
 
       const story = responseJson.story;
 
-      // Format the story data
       const storyData = {
         id: story.id,
         title: story.name,
         description: story.description,
         photo: story.photoUrl,
         createdAt: story.createdAt,
-        author: story.name, // Using name as author since API doesn't have separate author field
+        author: story.name,
         lat: story.lat,
         lon: story.lon,
         location: null,
       };
 
-      // Add location data if available
       if (story.lat && story.lon) {
         try {
           storyData.location = await getLocationString(story.lat, story.lon);

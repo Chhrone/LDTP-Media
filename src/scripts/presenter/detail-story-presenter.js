@@ -19,45 +19,79 @@ class DetailStoryPage {
   }
 
   async render() {
-    // Check if user is logged in, redirect to login if not
     if (!AuthHelper.checkAuth()) {
       return '';
     }
 
-    // Show loading template initially
-    return this._view.getLoadingTemplate();
+    return this._view.getTemplate();
   }
 
   async afterRender() {
+    const contentContainer = document.querySelector('.detail-story-content-container');
+    if (contentContainer) {
+      contentContainer.innerHTML = this._view.getLoadingTemplate();
+    }
+
     try {
-      // Get story ID from URL
       const { id } = parseActivePathname();
 
       if (!id) {
         throw new Error('Story ID not found');
       }
 
+      sessionStorage.setItem('lastViewedStoryId', id);
+
+      const currentPath = window.location.hash;
+      const referrerPath = document.referrer;
+
+      const pageMatch = currentPath.match(/#\/page\/(\d+)/);
+      if (pageMatch && pageMatch[1]) {
+        sessionStorage.setItem('lastViewedPage', pageMatch[1]);
+      } else {
+        const referrerPageMatch = referrerPath.match(/page\/(\d+)/);
+        if (referrerPageMatch && referrerPageMatch[1]) {
+          sessionStorage.setItem('lastViewedPage', referrerPageMatch[1]);
+        } else {
+          const currentPage = sessionStorage.getItem('lastViewedPage') || '1';
+          sessionStorage.setItem('lastViewedPage', currentPage);
+        }
+      }
+
       // Fetch story data
       const storyData = await this._model.getStoryById(id);
 
-      // Update the view with story data
       this._updateView(storyData);
 
-      // Initialize map if story has location data
       if (storyData.lat && storyData.lon) {
         this._initMap(storyData);
       }
+
+      // Add event listener to the back button to navigate to the correct page
+      const backButton = document.getElementById('back-to-stories');
+      if (backButton) {
+        backButton.addEventListener('click', (event) => {
+          event.preventDefault();
+          const lastPage = sessionStorage.getItem('lastViewedPage');
+          if (lastPage && lastPage !== '1') {
+            window.location.hash = `/page/${lastPage}`;
+          } else {
+            window.location.hash = '/';
+          }
+        });
+      }
     } catch (error) {
       console.error('Error rendering detail story page:', error);
-      document.querySelector('.detail-story-container').innerHTML =
-        this._view.getErrorTemplate(error.message);
+      const contentContainer = document.querySelector('.detail-story-content-container');
+      if (contentContainer) {
+        contentContainer.innerHTML = this._view.getErrorTemplate(error.message);
+      }
     }
   }
 
   _updateView(storyData) {
-    const detailContainer = document.querySelector('.detail-story-container');
-    if (detailContainer) {
-      detailContainer.innerHTML = this._view.getDetailTemplate(storyData);
+    const contentContainer = document.querySelector('.detail-story-content-container');
+    if (contentContainer) {
+      contentContainer.innerHTML = this._view.getDetailTemplate(storyData);
     }
   }
 
@@ -66,10 +100,8 @@ class DetailStoryPage {
       const mapContainer = document.getElementById('detail-map');
       if (!mapContainer) return;
 
-      // Initialize the map
       this._map = L.map('detail-map').setView([storyData.lat, storyData.lon], 10);
 
-      // Add the base tile layer
       L.tileLayer(
         `https://api.maptiler.com/maps/${this._mapConfig.mapStyles.streets}/256/{z}/{x}/{y}.png?key=${this._mapConfig.apiKey}`,
         {
@@ -78,7 +110,6 @@ class DetailStoryPage {
         }
       ).addTo(this._map);
 
-      // Add marker for the story location
       this._marker = L.marker([storyData.lat, storyData.lon]).addTo(this._map);
 
       // Create popup content

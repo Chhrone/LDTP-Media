@@ -80,7 +80,6 @@ class CreateStoryModel {
         };
       }
 
-      // Process the response
       const storyData = {
         id: responseJson.story?.id,
         name: responseJson.story?.name,
@@ -92,7 +91,6 @@ class CreateStoryModel {
         location: null,
       };
 
-      // Add location data if available
       if (storyData.lat && storyData.lon) {
         try {
           storyData.location = await getLocationString(storyData.lat, storyData.lon);
@@ -127,7 +125,6 @@ class CreateStoryModel {
         img.src = event.target.result;
 
         img.onload = () => {
-          // Calculate new dimensions
           let width = img.width;
           let height = img.height;
 
@@ -143,7 +140,6 @@ class CreateStoryModel {
             }
           }
 
-          // Create canvas and draw image
           const canvas = document.createElement('canvas');
           canvas.width = width;
           canvas.height = height;
@@ -151,10 +147,8 @@ class CreateStoryModel {
           const ctx = canvas.getContext('2d');
           ctx.drawImage(img, 0, 0, width, height);
 
-          // Convert to blob
           canvas.toBlob(
             (blob) => {
-              // Create new file from blob
               const compressedFile = new File([blob], file.name, {
                 type: 'image/jpeg',
                 lastModified: Date.now(),

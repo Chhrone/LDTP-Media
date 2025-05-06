@@ -9,11 +9,9 @@ class HomeModel {
 
   async getHomeData(page = 1, size = 12) {
     try {
-      // Add pagination parameters to the URL
       const url = new URL(`${this._baseUrl}/stories`);
       url.searchParams.append('page', page);
       url.searchParams.append('size', size);
-      // Setting location=0 ensures we get all stories regardless of location data
       url.searchParams.append('location', 0);
 
       const response = await fetch(url, {
@@ -28,9 +26,7 @@ class HomeModel {
         throw new Error(responseJson.message);
       }
 
-      // Process the stories to extract excerpts and add location data
       const stories = await Promise.all(responseJson.listStory.map(async story => {
-        // Basic story data
         const storyData = {
           id: story.id,
           title: story.name,
@@ -42,7 +38,6 @@ class HomeModel {
           location: null,
         };
 
-        // Add location data if available
         if (story.lat && story.lon) {
           try {
             storyData.location = await getLocationString(story.lat, story.lon);
@@ -61,7 +56,7 @@ class HomeModel {
         featuredStories: stories,
         pagination: {
           currentPage: page,
-          totalPages: 7, // Hardcoded to 7 pages based on 73 stories total with 12 per page
+          totalPages: 8,
           pageSize: size
         }
       };
@@ -74,17 +69,12 @@ class HomeModel {
   _createExcerpt(text, maxWords = 40) {
     if (!text) return '';
 
-    // Split text into words
     const words = text.trim().split(/\s+/);
 
-    // If text has fewer words than the limit, return the original text
     if (words.length <= maxWords) return text;
 
-    // Get the first maxWords words
     const truncatedWords = words.slice(0, maxWords);
 
-    // Check if any of the words are extremely long (more than 30 chars)
-    // and truncate them if necessary to prevent layout issues
     for (let i = 0; i < truncatedWords.length; i++) {
       if (truncatedWords[i].length > 30) {
         truncatedWords[i] = truncatedWords[i].substring(0, 30) + '...';

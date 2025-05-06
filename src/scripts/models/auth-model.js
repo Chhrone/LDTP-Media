@@ -52,7 +52,6 @@ class AuthModel {
         throw new Error(responseJson.message);
       }
 
-      // Save token and user data to localStorage
       this._saveToken(responseJson.loginResult.token);
       this._saveUserData({
         id: responseJson.loginResult.userId,

@@ -5,6 +5,11 @@
   padding: 20px 0;
   max-width: 900px;
   margin: 0 auto;
+  position: relative;
+}
+
+.detail-story-content-container {
+  margin-top: 15px;
 }
 
 .detail-story {

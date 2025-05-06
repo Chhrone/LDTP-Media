@@ -9,7 +9,12 @@ class DetailStoryView {
     return `
       <div class="container">
         <div class="detail-story-container">
-          <!-- Detail story content will be loaded here -->
+          <a href="#/" class="back-button">
+            <i class="fas fa-arrow-left"></i> Back
+          </a>
+          <div class="detail-story-content-container">
+            <!-- Detail story content will be loaded here -->
+          </div>
         </div>
       </div>
     `;
@@ -17,13 +22,9 @@ class DetailStoryView {
 
   getLoadingTemplate() {
     return `
-      <div class="container">
-        <div class="detail-story-container">
-          <div class="loading-container">
-            <div class="loading-spinner"></div>
-            <p>Loading story details...</p>
-          </div>
-        </div>
+      <div class="loading-container">
+        <div class="loading-spinner"></div>
+        <p>Loading story details...</p>
       </div>
     `;
   }
@@ -40,7 +41,7 @@ class DetailStoryView {
 
   getDetailTemplate(story) {
     return `
-      <div class="detail-story">
+      <div class="detail-story" style="view-transition-name: story-card-${story.id}">
         <div class="detail-story-header">
           <h1 class="detail-story-title" style="view-transition-name: story-title-${story.id}">${story.title}</h1>
           <div class="detail-story-meta">
@@ -56,13 +57,13 @@ class DetailStoryView {
         </div>
 
         ${story.photo ? `
-          <div class="detail-story-image">
-            <img src="${story.photo}" alt="${story.title}" loading="lazy" style="view-transition-name: story-image-${story.id}">
+          <div class="detail-story-image" style="view-transition-name: story-image-${story.id}">
+            <img src="${story.photo}" alt="${story.title}" loading="lazy">
           </div>
         ` : ''}
 
-        <div class="detail-story-content">
-          <div class="detail-story-description" style="view-transition-name: story-description-${story.id}">
+        <div class="detail-story-content" style="view-transition-name: story-content-${story.id}">
+          <div class="detail-story-description">
             <p>${this._formatDescription(story.description)}</p>
           </div>
 
@@ -75,7 +76,7 @@ class DetailStoryView {
         </div>
 
         <div class="detail-story-actions">
-          <a href="#/" class="btn btn-back">
+          <a href="#/" class="btn btn-back" id="back-to-stories">
             <i class="fas fa-arrow-left"></i> Back to Stories
           </a>
         </div>

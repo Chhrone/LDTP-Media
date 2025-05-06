@@ -46,6 +46,5 @@ class AuthPresenter {
   }
 }
 
-// Create a singleton instance
 const authPresenter = new AuthPresenter();
 export default authPresenter;

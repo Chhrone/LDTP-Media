@@ -23,7 +23,6 @@ class GuestStoryModel {
 
       const compressedFormData = new FormData();
 
-      // Handle photo compression
       const photoFile = formData.get('photo');
       if (photoFile && photoFile instanceof File) {
         try {
@@ -43,14 +42,11 @@ class GuestStoryModel {
         }
       }
 
-      // Copy all other form data
       for (const [key, value] of formData.entries()) {
         if (key !== 'photo') {
           compressedFormData.append(key, value);
         }
       }
-
-      // Use the guest story endpoint
       const response = await fetch(`${this._baseUrl}/stories/guest`, {
         method: 'POST',
         body: compressedFormData,
@@ -70,7 +66,6 @@ class GuestStoryModel {
         };
       }
 
-      // Process the response
       const storyData = {
         id: responseJson.story?.id,
         name: responseJson.story?.name,
@@ -82,7 +77,6 @@ class GuestStoryModel {
         location: null,
       };
 
-      // Add location data if available
       if (storyData.lat && storyData.lon) {
         try {
           storyData.location = await getLocationString(storyData.lat, storyData.lon);
@@ -117,7 +111,6 @@ class GuestStoryModel {
         img.src = event.target.result;
 
         img.onload = () => {
-          // Calculate new dimensions
           let width = img.width;
           let height = img.height;
 
@@ -133,7 +126,6 @@ class GuestStoryModel {
             }
           }
 
-          // Create canvas and draw image
           const canvas = document.createElement('canvas');
           canvas.width = width;
           canvas.height = height;
@@ -141,10 +133,8 @@ class GuestStoryModel {
           const ctx = canvas.getContext('2d');
           ctx.drawImage(img, 0, 0, width, height);
 
-          // Convert to blob
           canvas.toBlob(
             (blob) => {
-              // Create new file from blob
               const compressedFile = new File([blob], file.name, {
                 type: 'image/jpeg',
                 lastModified: Date.now(),
