@@ -30,29 +30,19 @@ class SettingsPage {
       const userData = this._model.getUserData();
       this._currentSettings = await this._model.getSettings();
 
+      // Update profile information
       this._view.updateProfileInfo(userData);
-      this._initializeForm();
+
+      // Initialize form with current settings
+      this._view.initializeForm(this._currentSettings);
+
+      // Initialize map preview
       this._initializeMapPreview();
+
+      // Setup event listeners
       this._setupEventListeners();
     } catch (error) {
       console.error('Error initializing settings page:', error);
-    }
-  }
-
-  _initializeForm() {
-    const languageSelect = document.getElementById('language-select');
-    if (languageSelect && this._currentSettings.language) {
-      languageSelect.value = this._currentSettings.language;
-    }
-
-    const themeSelect = document.getElementById('theme-select');
-    if (themeSelect && this._currentSettings.theme) {
-      themeSelect.value = this._currentSettings.theme;
-    }
-
-    const mapStyleSelect = document.getElementById('map-style-select');
-    if (mapStyleSelect && this._currentSettings.mapStyle) {
-      mapStyleSelect.value = this._currentSettings.mapStyle;
     }
   }
 
@@ -62,20 +52,17 @@ class SettingsPage {
   }
 
   _setupEventListeners() {
-    const mapStyleSelect = document.getElementById('map-style-select');
-    if (mapStyleSelect) {
-      mapStyleSelect.addEventListener('change', (event) => {
-        const selectedStyle = event.target.value;
+    // Setup map style change event
+    this._view.setupEventListeners(
+      // Map style change callback
+      (selectedStyle) => {
         this._mapPreview = this._view.updateMapPreview(this._mapConfig, selectedStyle);
-      });
-    }
-
-    const saveButton = document.getElementById('save-settings');
-    if (saveButton) {
-      saveButton.addEventListener('click', async () => {
+      },
+      // Save settings callback
+      async () => {
         await this._saveSettings();
-      });
-    }
+      }
+    );
   }
 
   /**
@@ -86,16 +73,10 @@ class SettingsPage {
     try {
       this._view.showLoading();
 
-      const languageSelect = document.getElementById('language-select');
-      const themeSelect = document.getElementById('theme-select');
-      const mapStyleSelect = document.getElementById('map-style-select');
+      // Get form values from view
+      const settings = this._view.getFormValues(this._currentSettings);
 
-      const settings = {
-        language: languageSelect ? languageSelect.value : this._currentSettings.language,
-        theme: themeSelect ? themeSelect.value : this._currentSettings.theme,
-        mapStyle: mapStyleSelect ? mapStyleSelect.value : this._currentSettings.mapStyle
-      };
-
+      // Update settings in model
       const result = await this._model.updateSettings(settings);
       this._view.hideLoading();
 
@@ -103,9 +84,13 @@ class SettingsPage {
         this._view.showErrorMessage(result.message);
       } else {
         this._view.showSuccessMessage(result.message);
+        
+        // Store current settings
+        const previousTheme = this._currentSettings.theme;
         this._currentSettings = settings;
 
-        if (settings.theme !== this._currentSettings.theme) {
+        // Apply theme if changed
+        if (settings.theme !== previousTheme) {
           this._applyTheme(settings.theme);
         }
       }

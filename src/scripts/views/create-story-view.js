@@ -135,14 +135,30 @@ class CreateStoryView {
    * @param {Function} onStyleChange - Callback for map style changes
    * @returns {Object} Map and marker objects
    */
+  /**
+   * Updates the location values in the form
+   * @param {number} lat - Latitude value
+   * @param {number} lng - Longitude value
+   */
+  updateLocationValues(lat, lng) {
+    document.getElementById('lat').value = lat;
+    document.getElementById('lon').value = lng;
+  }
+
+  /**
+   * Initializes the map component with click handlers, style selector, and location features
+   * @param {Object} mapConfig - Configuration for the map
+   * @param {Function} onMapClick - Callback for map click events
+   * @param {Function} onStyleChange - Callback for map style changes
+   * @returns {Object} Map and marker objects
+   */
   async initializeMap(mapConfig, onMapClick, onStyleChange) {
     // Initialize the map using MapHandler
     const { map, marker } = await MapHandler.initializeMap({
       mapElementId: 'create-map',
       mapConfig,
       onMapClick: (lat, lng) => {
-        document.getElementById('lat').value = lat;
-        document.getElementById('lon').value = lng;
+        this.updateLocationValues(lat, lng);
         if (onMapClick) onMapClick(lat, lng);
       }
     });
@@ -162,8 +178,7 @@ class CreateStoryView {
       map,
       marker,
       onLocationFound: (latitude, longitude) => {
-        document.getElementById('lat').value = latitude;
-        document.getElementById('lon').value = longitude;
+        this.updateLocationValues(latitude, longitude);
         if (onMapClick) onMapClick(latitude, longitude);
       }
     });
@@ -182,8 +197,7 @@ class CreateStoryView {
           map,
           marker,
           onLocationFound: (lat, lng) => {
-            document.getElementById('lat').value = lat;
-            document.getElementById('lon').value = lng;
+            this.updateLocationValues(lat, lng);
             if (onMapClick) onMapClick(lat, lng);
           }
         });
@@ -201,8 +215,7 @@ class CreateStoryView {
             map,
             marker,
             onLocationFound: (lat, lng) => {
-              document.getElementById('lat').value = lat;
-              document.getElementById('lon').value = lng;
+              this.updateLocationValues(lat, lng);
               if (onMapClick) onMapClick(lat, lng);
             }
           });
@@ -349,6 +362,31 @@ class CreateStoryView {
         alert('An error occurred while submitting the form. Please try again.');
       }
     });
+  }
+
+  /**
+   * Initializes event listeners for page navigation and cleanup
+   * @param {Function} onBeforeUnload - Callback for beforeunload event
+   * @param {Function} onHashChange - Callback for hashchange event
+   * @param {Function} onUnload - Callback for unload event
+   */
+  initializePageEvents(onBeforeUnload, onHashChange, onUnload) {
+    // Add event listener for beforeunload event
+    if (onBeforeUnload) {
+      window.addEventListener('beforeunload', onBeforeUnload);
+    }
+
+    // Add event listener for hashchange event
+    if (onHashChange) {
+      window.addEventListener('hashchange', onHashChange);
+    }
+
+    // Add event listener for unload event
+    if (onUnload) {
+      document.addEventListener('DOMContentLoaded', () => {
+        window.addEventListener('unload', onUnload);
+      });
+    }
   }
 }
 

@@ -38,29 +38,13 @@ class LoginPage {
     return this._view.getTemplate();
   }
   async afterRender() {
-    const loginForm = document.getElementById('login-form');
-    const guestPostButton = document.getElementById('guest-post-button');
+    // Initialize guest post button
+    this._view.initializeGuestPostButton(() => {
+      this._view.navigateTo('#/guest-story');
+    });
 
-    if (guestPostButton) {
-      guestPostButton.addEventListener('click', () => {
-        if (document.startViewTransition) {
-          window.location.hash = '#/guest-story';
-        } else {
-          window.location.hash = '#/guest-story';
-        }
-      });
-    }
-
-    loginForm.addEventListener('submit', async (event) => {
-      event.preventDefault();
-      this._view.clearError();
-
-      const formData = new FormData(loginForm);
-      const loginData = {
-        email: formData.get('email'),
-        password: formData.get('password'),
-      };
-
+    // Initialize login form
+    this._view.initializeLoginForm(async (loginData) => {
       try {
         this._view.showLoading();
         this._startLoadingAnimation();
@@ -68,32 +52,10 @@ class LoginPage {
         await authPresenter.login(loginData);
         await sleep(1500);
 
-        const navList = document.getElementById('nav-list');
-        const userButton = document.getElementById('user-button');
-        const usernameText = document.getElementById('username-text');
         const userData = AuthHelper.getUserData();
+        this._view.updateNavigationUI(userData);
 
-        if (navList) {
-          navList.style.display = 'flex';
-        }
-
-        if (userButton && userData) {
-          userButton.style.display = 'block';
-          if (usernameText) {
-            usernameText.textContent = userData.name;
-          }
-
-          const logoutLink = document.getElementById('logout-link');
-          if (logoutLink) {
-            logoutLink.style.display = 'block';
-          }
-        }
-        if (document.startViewTransition) {
-          window.location.hash = '#/';
-        } else {
-          window.location.hash = '#/';
-          window.location.reload();
-        }
+        this._view.navigateTo('#/', true);
       } catch (error) {
         console.error('Login error:', error);
         this._view.hideLoading();

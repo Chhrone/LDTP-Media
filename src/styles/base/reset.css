@@ -13,4 +13,5 @@ body {
   flex-direction: column;
   background-color: var(--light-beige);
   color: var(--text-dark);
+  position: relative;
 }

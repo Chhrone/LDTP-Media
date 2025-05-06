@@ -47,32 +47,33 @@ class CreateStoryPage {
     // Initialize form submission
     this._view.initializeForm(this._handleSubmit.bind(this));
 
-    // Add event listeners to stop camera when navigating away
-    window.addEventListener('beforeunload', () => {
+    // Create event handlers
+    const handleBeforeUnload = () => {
       console.log('beforeunload event - stopping camera');
       this._stopCamera();
-    });
+    };
 
     this._hashChangeHandler = () => {
       console.log('hashchange event - stopping camera');
       this._stopCamera();
     };
 
-    window.addEventListener('hashchange', this._hashChangeHandler);
+    const handleUnload = () => {
+      console.log('unload event - stopping camera');
+      this._stopCamera();
+    };
 
-    // Also add a cleanup method 
-    document.addEventListener('DOMContentLoaded', () => {
-      window.addEventListener('unload', () => {
-        console.log('unload event - stopping camera');
-        this._stopCamera();
-      });
-    });
+    // Initialize page events through the view
+    this._view.initializePageEvents(
+      handleBeforeUnload,
+      this._hashChangeHandler,
+      handleUnload
+    );
   }
 
   _handleMapClick(lat, lng) {
-    // Update hidden inputs
-    document.getElementById('lat').value = lat;
-    document.getElementById('lon').value = lng;
+    // Use the view to update location values
+    this._view.updateLocationValues(lat, lng);
   }
 
   _handleStyleChange(style, map) {
@@ -164,11 +165,16 @@ class CreateStoryPage {
   // Method to clean up resources when the page is destroyed
   destroy() {
     console.log('Destroying create-story-presenter');
+
+    // Clean up camera resources
+    this._stopCamera();
+
+    // Note: The event listeners added through initializePageEvents will be automatically
+    // removed when navigating to another page, as they're bound to the current page's DOM.
+    // However, we still need to remove the hashchange event listener explicitly.
     if (this._hashChangeHandler) {
       window.removeEventListener('hashchange', this._hashChangeHandler);
     }
-
-    this._stopCamera();
   }
 }
 

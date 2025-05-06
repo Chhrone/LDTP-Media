@@ -39,33 +39,13 @@ class RegisterPage {
   }
 
   async afterRender() {
-    const registerForm = document.getElementById('register-form');
-    const guestPostButton = document.getElementById('guest-post-button');
+    // Initialize guest post button
+    this._view.initializeGuestPostButton(() => {
+      this._view.navigateTo('#/guest-story');
+    });
 
-    // Add event listener for the guest post button
-    if (guestPostButton) {
-      guestPostButton.addEventListener('click', () => {
-        // Navigate to the guest story page
-        if (document.startViewTransition) {
-          // Use View Transitions API if available
-          window.location.hash = '#/guest-story';
-        } else {
-          window.location.hash = '#/guest-story';
-        }
-      });
-    }
-
-    registerForm.addEventListener('submit', async (event) => {
-      event.preventDefault();
-      this._view.clearError();
-
-      const formData = new FormData(registerForm);
-      const registerData = {
-        name: formData.get('name'),
-        email: formData.get('email'),
-        password: formData.get('password'),
-      };
-
+    // Initialize register form
+    this._view.initializeRegisterForm(async (registerData) => {
       try {
         // Show loading animation
         this._view.showLoading();
@@ -85,39 +65,12 @@ class RegisterPage {
         // Add a small delay for better UX
         await sleep(1000);
 
-        // Update navigation UI to show nav links and user button after successful registration and login
-        const navList = document.getElementById('nav-list');
-        const userButton = document.getElementById('user-button');
-        const usernameText = document.getElementById('username-text');
+        // Update navigation UI
         const userData = AuthHelper.getUserData();
+        this._view.updateNavigationUI(userData);
 
-        // Show navigation links
-        if (navList) {
-          navList.style.display = 'flex';
-        }
-
-        // Show and update user button
-        if (userButton && userData) {
-          userButton.style.display = 'block';
-          if (usernameText) {
-            usernameText.textContent = userData.name;
-          }
-
-          // Show logout option in dropdown
-          const logoutLink = document.getElementById('logout-link');
-          if (logoutLink) {
-            logoutLink.style.display = 'block';
-          }
-        }
-
-        // Use View Transitions API if available for smooth transition to homepage
-        if (document.startViewTransition) {
-          // Change the hash without reloading
-          window.location.hash = '#/';
-        } else {
-          window.location.hash = '#/';
-          window.location.reload();
-        }
+        // Navigate to homepage with view transitions
+        this._view.navigateTo('#/', true);
       } catch (error) {
         console.error('Registration error:', error);
         this._view.hideLoading();

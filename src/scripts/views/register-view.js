@@ -121,6 +121,87 @@ class RegisterView {
       loadingText.textContent = text;
     }
   }
+
+  /**
+   * Initializes the guest post button with a click handler
+   * @param {Function} onGuestPostClick - Callback for guest post button click
+   */
+  initializeGuestPostButton(onGuestPostClick) {
+    const guestPostButton = document.getElementById('guest-post-button');
+
+    if (guestPostButton && onGuestPostClick) {
+      guestPostButton.addEventListener('click', onGuestPostClick);
+    }
+  }
+
+  /**
+   * Initializes the register form with a submit handler
+   * @param {Function} onSubmit - Callback for form submission
+   */
+  initializeRegisterForm(onSubmit) {
+    const registerForm = document.getElementById('register-form');
+
+    if (registerForm && onSubmit) {
+      registerForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        this.clearError();
+
+        const formData = new FormData(registerForm);
+        const registerData = {
+          name: formData.get('name'),
+          email: formData.get('email'),
+          password: formData.get('password'),
+        };
+
+        onSubmit(registerData);
+      });
+    }
+  }
+
+  /**
+   * Updates the navigation UI after successful registration
+   * @param {Object} userData - User data from authentication
+   */
+  updateNavigationUI(userData) {
+    const navList = document.getElementById('nav-list');
+    const userButton = document.getElementById('user-button');
+    const usernameText = document.getElementById('username-text');
+    const logoutLink = document.getElementById('logout-link');
+
+    if (navList) {
+      navList.style.display = 'flex';
+    }
+
+    if (userButton && userData) {
+      userButton.style.display = 'block';
+
+      if (usernameText) {
+        usernameText.textContent = userData.name;
+      }
+
+      if (logoutLink) {
+        logoutLink.style.display = 'block';
+      }
+    }
+  }
+
+  /**
+   * Navigates to a new page with view transitions if available
+   * @param {string} path - Path to navigate to
+   * @param {boolean} reload - Whether to reload the page after navigation
+   */
+  navigateTo(path, reload = false) {
+    if (document.startViewTransition) {
+      document.startViewTransition(() => {
+        window.location.hash = path;
+      });
+    } else {
+      window.location.hash = path;
+      if (reload) {
+        window.location.reload();
+      }
+    }
+  }
 }
 
 export default RegisterView;

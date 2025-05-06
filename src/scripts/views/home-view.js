@@ -1,4 +1,6 @@
 import { formatSimpleDate } from '../utils/index';
+import MapUtilities from '../utils/map-utilities';
+import NavigationUtilities from '../utils/navigation-utilities';
 
 class HomeView {
   constructor() {
@@ -151,6 +153,164 @@ class HomeView {
         ${paginationLinks}
       </div>
     `;
+  }
+
+  /**
+   * Initializes the map with story markers
+   * @param {Object} options - Map initialization options
+   * @param {Array} options.stories - Array of stories with location data
+   * @param {string} options.currentMapStyle - Current map style
+   * @param {Object} options.mapStyles - Map styles configuration
+   * @param {Object} options.config - Application configuration
+   * @returns {Object} Map and markers objects
+   */
+  async initializeMap(options) {
+    try {
+      const { stories, currentMapStyle, mapStyles, config } = options;
+      const mapContainer = document.getElementById('map-container');
+      if (!mapContainer) return { map: null, markers: [] };
+
+      // Filter stories with location data for the map
+      const storiesWithLocation = stories.filter(story => story.lat && story.lon);
+
+      // Show message if no stories have location data
+      if (storiesWithLocation.length === 0) {
+        const messageElement = document.createElement('div');
+        messageElement.className = 'map-message';
+        messageElement.innerHTML = '<p>No location data available for stories on this page.</p>';
+        mapContainer.appendChild(messageElement);
+      }
+
+      // Initialize the map using MapUtilities
+      maptilersdk.config.apiKey = config.MAPTILER_KEY;
+
+      const { map, markers } = MapUtilities.initializeMap({
+        containerId: 'map-container',
+        config,
+        currentStyle: currentMapStyle,
+        mapStyles,
+        stories: storiesWithLocation
+      });
+
+      // Add a message to inform users about scroll zoom
+      this._addZoomInfoMessage(mapContainer);
+
+      return { map, markers };
+    } catch (error) {
+      console.error('Error initializing map:', error);
+      const mapContainer = document.getElementById('map-container');
+      if (mapContainer) {
+        mapContainer.innerHTML = '<p class="text-center">Failed to load map. Please try again later.</p>';
+      }
+      return { map: null, markers: [] };
+    }
+  }
+
+  /**
+   * Adds zoom info message to the map container
+   * @param {HTMLElement} mapContainer - Map container element
+   */
+  _addZoomInfoMessage(mapContainer) {
+    const zoomInfoElement = document.createElement('div');
+    zoomInfoElement.className = 'map-zoom-info';
+    zoomInfoElement.innerHTML = '<i class="fas fa-mouse"></i> Scroll to zoom in/out';
+    mapContainer.appendChild(zoomInfoElement);
+
+    // Hide the zoom info after 5 seconds
+    setTimeout(() => {
+      zoomInfoElement.classList.add('fade-out');
+      setTimeout(() => {
+        if (zoomInfoElement.parentNode) {
+          zoomInfoElement.remove();
+        }
+      }, 1000);
+    }, 5000);
+  }
+
+  /**
+   * Initializes map style control buttons
+   * @param {Function} onStyleChange - Callback for style change events
+   */
+  initializeMapStyleControls(onStyleChange) {
+    const styleButtons = document.querySelectorAll('.map-style-button');
+
+    styleButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        if (button.classList.contains('active')) return;
+
+        styleButtons.forEach(btn => btn.classList.remove('active'));
+        button.classList.add('active');
+
+        const style = button.dataset.style;
+
+        if (onStyleChange) {
+          onStyleChange(style);
+        }
+      });
+    });
+  }
+
+  /**
+   * Initializes the locate me button functionality
+   * @param {Function} onLocateMe - Callback for locate me button click
+   */
+  initializeLocateMeButton(onLocateMe) {
+    const locateButton = document.getElementById('locate-me-button');
+    if (!locateButton) return;
+
+    locateButton.addEventListener('click', async () => {
+      if (!navigator.geolocation) {
+        MapUtilities.showMapNotification('Location services are not supported by your browser', 'map-container');
+        return;
+      }
+
+      locateButton.classList.add('loading');
+      locateButton.innerHTML = '<i class="fas fa-spinner"></i> Locating...';
+
+      try {
+        const position = await new Promise((resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(resolve, reject, {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 0
+          });
+        });
+
+        if (onLocateMe) {
+          await onLocateMe(position.coords.latitude, position.coords.longitude);
+        }
+      } catch (error) {
+        console.error('Error getting location:', error);
+
+        if (error.code === 1) {
+          MapUtilities.showMapNotification('Please enable location services in your browser to use this feature', 'map-container');
+        } else if (error.code === 2) {
+          MapUtilities.showMapNotification('Unable to determine your location. Please try again later', 'map-container');
+        } else if (error.code === 3) {
+          MapUtilities.showMapNotification('Location request timed out. Please try again', 'map-container');
+        } else {
+          MapUtilities.showMapNotification('Unable to access your location', 'map-container');
+        }
+      } finally {
+        locateButton.classList.remove('loading');
+        locateButton.innerHTML = '<i class="fas fa-location-arrow"></i> Locate Me';
+      }
+    });
+  }
+
+  /**
+   * Initializes pagination links with event handlers
+   * @param {Function} onPageChange - Callback for page change events
+   */
+  initializePaginationEvents(onPageChange) {
+    NavigationUtilities.setupPaginationLinks(onPageChange);
+  }
+
+  /**
+   * Initializes hero section call-to-action buttons
+   */
+  initializeHeroCTAEvents() {
+    NavigationUtilities.setupSmoothScrolling('.hero-btn-secondary', '#map-section');
   }
 }
 

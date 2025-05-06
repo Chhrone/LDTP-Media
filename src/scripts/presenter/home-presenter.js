@@ -55,176 +55,102 @@ class HomePage {
    * Initializes components after the page is rendered
    */
   async afterRender() {
+    // Initialize pagination events
     this._initPaginationEvents();
+
+    // Initialize map
     await this._initMap();
+
+    // Initialize map style controls
     this._initMapStyleControls();
+
+    // Initialize locate me button
     this._initLocateMeButton();
+
+    // Initialize hero CTA events
     this._initHeroCTAEvents();
 
+    // Handle return to story
     NavigationUtilities.handleReturnToStory(this._currentPage);
   }
-
-
 
   /**
    * Initializes hero section call-to-action buttons
    */
   _initHeroCTAEvents() {
-    NavigationUtilities.setupSmoothScrolling('.hero-btn-secondary', '#map-section');
+    this._view.initializeHeroCTAEvents();
   }
 
   /**
    * Initializes the locate me button functionality
    */
   _initLocateMeButton() {
-    const locateButton = document.getElementById('locate-me-button');
-    if (!locateButton) return;
+    this._view.initializeLocateMeButton(async (latitude, longitude) => {
+      if (this._map) {
+        // Create or update user location marker
+        this._userLocationMarker = await MapUtilities.createUserLocationMarker(
+          this._map,
+          latitude,
+          longitude,
+          this._userLocationMarker
+        );
 
-    locateButton.addEventListener('click', async () => {
-      if (!navigator.geolocation) {
-        MapUtilities.showMapNotification('Location services are not supported by your browser', 'map-container');
-        return;
-      }
-
-      locateButton.classList.add('loading');
-      locateButton.innerHTML = '<i class="fas fa-spinner"></i> Locating...';
-
-      try {
-        const position = await new Promise((resolve, reject) => {
-          navigator.geolocation.getCurrentPosition(resolve, reject, {
-            enableHighAccuracy: true,
-            timeout: 10000,
-            maximumAge: 0
-          });
+        // Fly to user location
+        this._map.flyTo([latitude, longitude], 13, {
+          animate: true,
+          duration: 1.5
         });
 
-        const { latitude, longitude } = position.coords;
-
-        if (this._map) {
-          this._userLocationMarker = await MapUtilities.createUserLocationMarker(
-            this._map,
-            latitude,
-            longitude,
-            this._userLocationMarker
-          );
-
-          this._map.flyTo([latitude, longitude], 13, {
-            animate: true,
-            duration: 1.5
-          });
-
-          setTimeout(() => {
+        // Open popup after animation completes
+        setTimeout(() => {
+          if (this._userLocationMarker) {
             this._userLocationMarker.openPopup();
-          }, 1600);
-        }
-      } catch (error) {
-        console.error('Error getting location:', error);
-
-        if (error.code === 1) {
-          MapUtilities.showMapNotification('Please enable location services in your browser to use this feature', 'map-container');
-        } else if (error.code === 2) {
-          MapUtilities.showMapNotification('Unable to determine your location. Please try again later', 'map-container');
-        } else if (error.code === 3) {
-          MapUtilities.showMapNotification('Location request timed out. Please try again', 'map-container');
-        } else {
-          MapUtilities.showMapNotification('Unable to access your location', 'map-container');
-        }
-      } finally {
-        locateButton.classList.remove('loading');
-        locateButton.innerHTML = '<i class="fas fa-location-arrow"></i> Locate Me';
+          }
+        }, 1600);
       }
     });
   }
-
-
 
   /**
    * Initializes the map with story markers
    */
   async _initMap() {
     try {
-      const mapContainer = document.getElementById('map-container');
-      if (!mapContainer) return;
-
       // Get stories data for the current page
       const data = await this._model.getHomeData(this._currentPage);
       const stories = data.featuredStories;
 
-      // Filter stories with location data for the map
-      const storiesWithLocation = stories.filter(story => story.lat && story.lon);
-
-      // Show message if no stories have location data
-      if (storiesWithLocation.length === 0) {
-        const messageElement = document.createElement('div');
-        messageElement.className = 'map-message';
-        messageElement.innerHTML = '<p>No location data available for stories on this page.</p>';
-        mapContainer.appendChild(messageElement);
-      }
-
-      // Initialize the map using MapUtilities
-      maptilersdk.config.apiKey = CONFIG.MAPTILER_KEY;
-
-      const { map, markers } = MapUtilities.initializeMap({
-        containerId: 'map-container',
-        config: CONFIG,
-        currentStyle: this._currentMapStyle,
+      // Initialize map through view
+      const { map, markers } = await this._view.initializeMap({
+        stories,
+        currentMapStyle: this._currentMapStyle,
         mapStyles: this._mapStyles,
-        stories: storiesWithLocation
+        config: CONFIG
       });
 
+      // Store map and markers references
       this._map = map;
       this._markers = markers;
-
-      // Add a message to inform users about scroll zoom
-      const zoomInfoElement = document.createElement('div');
-      zoomInfoElement.className = 'map-zoom-info';
-      zoomInfoElement.innerHTML = '<i class="fas fa-mouse"></i> Scroll to zoom in/out';
-      mapContainer.appendChild(zoomInfoElement);
-
-      // Hide the zoom info after 5 seconds
-      setTimeout(() => {
-        zoomInfoElement.classList.add('fade-out');
-        setTimeout(() => {
-          zoomInfoElement.remove();
-        }, 1000);
-      }, 5000);
-
     } catch (error) {
       console.error('Error initializing map:', error);
-      const mapContainer = document.getElementById('map-container');
-      if (mapContainer) {
-        mapContainer.innerHTML = '<p class="text-center">Failed to load map. Please try again later.</p>';
-      }
     }
   }
-
-
 
   /**
    * Initializes map style control buttons
    */
   _initMapStyleControls() {
-    const styleButtons = document.querySelectorAll('.map-style-button');
+    this._view.initializeMapStyleControls((style) => {
+      this._currentMapStyle = style;
 
-    styleButtons.forEach(button => {
-      button.addEventListener('click', () => {
-        if (button.classList.contains('active')) return;
-
-        styleButtons.forEach(btn => btn.classList.remove('active'));
-        button.classList.add('active');
-
-        const style = button.dataset.style;
-        this._currentMapStyle = style;
-
-        if (this._map) {
-          MapUtilities.updateMapStyle(
-            this._map,
-            style,
-            this._mapStyles,
-            CONFIG.MAPTILER_KEY
-          );
-        }
-      });
+      if (this._map) {
+        MapUtilities.updateMapStyle(
+          this._map,
+          style,
+          this._mapStyles,
+          CONFIG.MAPTILER_KEY
+        );
+      }
     });
   }
 
@@ -232,7 +158,7 @@ class HomePage {
    * Initializes pagination links with event handlers
    */
   _initPaginationEvents() {
-    NavigationUtilities.setupPaginationLinks((page) => {
+    this._view.initializePaginationEvents((page) => {
       if (page !== this._currentPage) {
         // Clean up map before navigation
         if (this._map) {
@@ -242,8 +168,14 @@ class HomePage {
           this._userLocationMarker = null;
         }
 
-        // Navigate to the new page
-        window.location.hash = `/page/${page}`;
+        // Navigate to the new page using view transitions if available
+        if (document.startViewTransition) {
+          document.startViewTransition(() => {
+            window.location.hash = `/page/${page}`;
+          });
+        } else {
+          window.location.hash = `/page/${page}`;
+        }
       }
     });
   }

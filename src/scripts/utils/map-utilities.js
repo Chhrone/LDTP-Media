@@ -2,7 +2,7 @@
  * Map utilities for handling map operations across the application
  * Provides functions for map initialization, markers, and location services
  */
-import { getLocationString } from './geocoding-service';
+// No imports needed from geocoding-service
 
 class MapUtilities {
   /**
@@ -64,11 +64,6 @@ class MapUtilities {
         const popupContent = `
           <div class="map-popup-content">
             <div class="map-popup-title">${story.title}</div>
-            ${story.location ? `
-              <div class="map-popup-location">
-                <i class="fas fa-map-marker-alt"></i> ${story.location}
-              </div>
-            ` : ''}
             <a href="#/story/${story.id}" class="map-popup-link">Read Story</a>
           </div>
         `;
@@ -128,13 +123,10 @@ class MapUtilities {
     const marker = L.marker([latitude, longitude], { icon: userIcon }).addTo(map);
 
     try {
-      const locationString = await getLocationString(latitude, longitude);
+      // Create popup content without location string
       const popupContent = `
         <div class="map-popup-content">
           <div class="map-popup-title">Your Location</div>
-          <div class="map-popup-location">
-            <i class="fas fa-map-marker-alt"></i> ${locationString}
-          </div>
         </div>
       `;
       marker.bindPopup(popupContent);

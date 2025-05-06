@@ -2,7 +2,7 @@
  * Map handler utility for Leaflet map operations
  * Provides functions for map initialization, marker creation, and location services
  */
-import { getLocationString } from './geocoding-service';
+import { getDetailedLocation } from './geocoding-service';
 
 class MapHandler {
   /**
@@ -16,7 +16,7 @@ class MapHandler {
    */
   static async initializeMap(options) {
     const { mapElementId, mapConfig, onMapClick, onStyleChange } = options;
-    
+
     const map = L.map(mapElementId).setView(mapConfig.defaultCenter, mapConfig.defaultZoom);
     let marker = null;
 
@@ -65,16 +65,25 @@ class MapHandler {
     }
 
     try {
-      const locationString = await getLocationString(lat, lng);
+      // Get detailed location information
+      const { details } = await getDetailedLocation(lat, lng);
+
+      // Create popup content with detailed information
       const popupContent = `
         <div class="map-popup-content">
           <div class="map-popup-title">Your Location</div>
-          <div class="map-popup-location">
-            <i class="fas fa-map-marker-alt"></i> ${locationString}
-          </div>
+          ${details ? `
+            <div class="map-popup-details">
+              ${details.place && details.place !== 'Unknown' ? `<div><strong>Place:</strong> ${details.place}</div>` : ''}
+              ${details.county && details.county !== 'Unknown' ? `<div><strong>County:</strong> ${details.county}</div>` : ''}
+              ${details.subregion && details.subregion !== 'Unknown' ? `<div><strong>Region:</strong> ${details.subregion}</div>` : ''}
+              ${details.country && details.country !== 'Unknown' ? `<div><strong>Country:</strong> ${details.country}</div>` : ''}
+            </div>
+          ` : ''}
         </div>
       `;
-      marker.bindPopup(popupContent);
+
+      marker.bindPopup(popupContent, { maxWidth: 300 });
 
       marker.on('mouseover', function() {
         this.openPopup();
@@ -83,7 +92,7 @@ class MapHandler {
         this.closePopup();
       });
     } catch (error) {
-      console.error('Error getting location string:', error);
+      console.error('Error getting location information:', error);
     }
 
     return marker;
@@ -100,7 +109,7 @@ class MapHandler {
   static initializeLocateMe(options) {
     const { buttonId, map, marker, onLocationFound } = options;
     const locateMeButton = document.getElementById(buttonId);
-    
+
     if (!locateMeButton) return;
 
     locateMeButton.addEventListener('click', async () => {
@@ -160,7 +169,7 @@ class MapHandler {
    */
   static async searchLocation(options) {
     const { query, apiKey, map, marker, onLocationFound } = options;
-    
+
     try {
       const url = `https://api.maptiler.com/geocoding/${encodeURIComponent(query)}.json?key=${apiKey}`;
       const response = await fetch(url);
@@ -182,7 +191,7 @@ class MapHandler {
         if (onLocationFound) {
           onLocationFound(lat, lng, updatedMarker);
         }
-        
+
         return { lat, lng, marker: updatedMarker };
       } else {
         alert('Location not found. Please try a different search term.');

@@ -1,6 +1,11 @@
 import CONFIG from '../config';
 
-// Mengubah koordinat menjadi informasi lokasi (subregion dan country)
+/**
+ * Converts coordinates to location information (place, county, subregion, country)
+ * @param {number} lat - Latitude
+ * @param {number} lon - Longitude
+ * @returns {Object} Location information
+ */
 async function reverseGeocode(lat, lon) {
   try {
     if (!lat || !lon) {
@@ -19,49 +24,94 @@ async function reverseGeocode(lat, lon) {
     if (data && data.features && data.features.length > 0) {
       const feature = data.features[0];
 
+      // Extract place name from the main feature
+      const place = feature.text || null;
+
+      // Initialize location components
+      let county = null;
       let subregion = null;
       let country = null;
 
+      // Extract context information
       if (feature.context) {
         for (const ctx of feature.context) {
           if (ctx.id.startsWith('country')) {
             country = ctx.text;
           } else if (ctx.id.startsWith('subregion')) {
             subregion = ctx.text;
+          } else if (ctx.id.startsWith('county')) {
+            county = ctx.text;
           }
         }
       }
 
-      return { subregion, country };
+      return { place, county, subregion, country };
     }
 
-    return { subregion: null, country: null };
+    return { place: null, county: null, subregion: null, country: null };
   } catch (error) {
     console.error('Error in reverse geocoding:', error);
-    return { subregion: null, country: null, error: error.message };
+    return { place: null, county: null, subregion: null, country: null, error: error.message };
   }
 }
 
-// Mendapatkan string lokasi dalam format "Subregion, Country"
-async function getLocationString(lat, lon) {
+/**
+ * Gets detailed location information for popup display
+ * @param {number} lat - Latitude
+ * @param {number} lon - Longitude
+ * @returns {Object} Formatted location information
+ */
+async function getDetailedLocation(lat, lon) {
   try {
-    const { subregion, country, error } = await reverseGeocode(lat, lon);
+    const { place, county, subregion, country, error } = await reverseGeocode(lat, lon);
 
     if (error) {
-      return 'Unknown location';
+      return {
+        locationString: 'Unknown location',
+        details: null
+      };
     }
 
+    // Build the main location string
+    let locationString = 'Unknown location';
     if (subregion && country) {
-      return `${subregion}, ${country}`;
+      locationString = `${subregion}, ${country}`;
     } else if (country) {
-      return country;
+      locationString = country;
     }
 
-    return 'Unknown location';
+    // Build detailed information
+    const details = {
+      place: place || 'Unknown',
+      county: county || 'Unknown',
+      subregion: subregion || 'Unknown',
+      country: country || 'Unknown'
+    };
+
+    return { locationString, details };
+  } catch (error) {
+    console.error('Error getting detailed location:', error);
+    return {
+      locationString: 'Unknown location',
+      details: null
+    };
+  }
+}
+
+/**
+ * Gets a simple location string in format "Subregion, Country"
+ * @param {number} lat - Latitude
+ * @param {number} lon - Longitude
+ * @returns {string} Formatted location string
+ */
+async function getLocationString(lat, lon) {
+  try {
+    const { locationString } = await getDetailedLocation(lat, lon);
+    return locationString;
   } catch (error) {
     console.error('Error getting location string:', error);
     return 'Unknown location';
   }
 }
 
-export { reverseGeocode, getLocationString };
+export { reverseGeocode, getLocationString, getDetailedLocation };

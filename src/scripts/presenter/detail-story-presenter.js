@@ -2,6 +2,7 @@ import DetailStoryView from '../views/detail-story-view';
 import DetailStoryModel from '../models/detail-story-model';
 import AuthHelper from '../utils/auth-helper';
 import { parseActivePathname } from '../routes/url-parser';
+import { getDetailedLocation } from '../utils/geocoding-service';
 import CONFIG from '../config';
 
 class DetailStoryPage {
@@ -27,10 +28,8 @@ class DetailStoryPage {
   }
 
   async afterRender() {
-    const contentContainer = document.querySelector('.detail-story-content-container');
-    if (contentContainer) {
-      contentContainer.innerHTML = this._view.getLoadingTemplate();
-    }
+    // Show loading state
+    this._view.showLoading();
 
     try {
       const { id } = parseActivePathname();
@@ -39,103 +38,61 @@ class DetailStoryPage {
         throw new Error('Story ID not found');
       }
 
-      sessionStorage.setItem('lastViewedStoryId', id);
-
-      const currentPath = window.location.hash;
-      const referrerPath = document.referrer;
-
-      const pageMatch = currentPath.match(/#\/page\/(\d+)/);
-      if (pageMatch && pageMatch[1]) {
-        sessionStorage.setItem('lastViewedPage', pageMatch[1]);
-      } else {
-        const referrerPageMatch = referrerPath.match(/page\/(\d+)/);
-        if (referrerPageMatch && referrerPageMatch[1]) {
-          sessionStorage.setItem('lastViewedPage', referrerPageMatch[1]);
-        } else {
-          const currentPage = sessionStorage.getItem('lastViewedPage') || '1';
-          sessionStorage.setItem('lastViewedPage', currentPage);
-        }
-      }
+      // Initialize session storage for navigation
+      this._view.initializeSessionStorage(
+        id,
+        window.location.hash,
+        document.referrer
+      );
 
       // Fetch story data
       const storyData = await this._model.getStoryById(id);
 
-      this._updateView(storyData);
+      // Update the view with story data
+      this._view.updateView(storyData);
 
+      // Initialize map if location data exists
       if (storyData.lat && storyData.lon) {
-        this._initMap(storyData);
+        await this._initMap(storyData);
       }
 
-      // Add event listener to the back button to navigate to the correct page
-      const backButton = document.getElementById('back-to-stories');
-      if (backButton) {
-        backButton.addEventListener('click', (event) => {
-          event.preventDefault();
-          const lastPage = sessionStorage.getItem('lastViewedPage');
-          if (lastPage && lastPage !== '1') {
-            window.location.hash = `/page/${lastPage}`;
-          } else {
-            window.location.hash = '/';
-          }
-        });
-      }
+      // Initialize back button
+      this._initBackButton();
     } catch (error) {
       console.error('Error rendering detail story page:', error);
-      const contentContainer = document.querySelector('.detail-story-content-container');
-      if (contentContainer) {
-        contentContainer.innerHTML = this._view.getErrorTemplate(error.message);
-      }
+      this._view.showError(error.message);
     }
   }
 
-  _updateView(storyData) {
-    const contentContainer = document.querySelector('.detail-story-content-container');
-    if (contentContainer) {
-      contentContainer.innerHTML = this._view.getDetailTemplate(storyData);
-    }
+  _initBackButton() {
+    this._view.initializeBackButton(() => {
+      const lastPage = sessionStorage.getItem('lastViewedPage');
+      if (lastPage && lastPage !== '1') {
+        window.location.hash = `/page/${lastPage}`;
+      } else {
+        window.location.hash = '/';
+      }
+    });
   }
 
   async _initMap(storyData) {
     try {
-      const mapContainer = document.getElementById('detail-map');
-      if (!mapContainer) return;
+      // Initialize map through view
+      const { map, marker } = await this._view.initializeMap(storyData, this._mapConfig);
 
-      this._map = L.map('detail-map').setView([storyData.lat, storyData.lon], 10);
+      // Store map and marker references
+      this._map = map;
+      this._marker = marker;
 
-      L.tileLayer(
-        `https://api.maptiler.com/maps/${this._mapConfig.mapStyles.streets}/256/{z}/{x}/{y}.png?key=${this._mapConfig.apiKey}`,
-        {
-          attribution: '&copy; <a href="https://www.maptiler.com/">MapTiler</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-          maxZoom: 18
-        }
-      ).addTo(this._map);
+      if (map && marker) {
+        // Get detailed location information
+        const locationInfo = await getDetailedLocation(storyData.lat, storyData.lon);
 
-      this._marker = L.marker([storyData.lat, storyData.lon]).addTo(this._map);
-
-      // Create popup content
-      const popupContent = `
-        <div class="map-popup-content">
-          <div class="map-popup-title">${storyData.title}</div>
-          ${storyData.location ? `
-            <div class="map-popup-location">
-              <i class="fas fa-map-marker-alt"></i> ${storyData.location}
-            </div>
-          ` : ''}
-        </div>
-      `;
-
-      this._marker.bindPopup(popupContent).openPopup();
-
-      // Refresh the map after it's visible
-      setTimeout(() => {
-        this._map.invalidateSize();
-      }, 100);
+        // Update marker popup with location information
+        this._view.updateMapMarkerPopup(marker, storyData, locationInfo);
+      }
     } catch (error) {
       console.error('Error initializing map:', error);
-      const mapContainer = document.getElementById('detail-map');
-      if (mapContainer) {
-        mapContainer.innerHTML = '<p class="text-center">Failed to load map</p>';
-      }
     }
   }
 }

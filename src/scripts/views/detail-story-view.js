@@ -94,6 +94,145 @@ class DetailStoryView {
       .map(paragraph => `<p>${paragraph}</p>`)
       .join('');
   }
+
+  /**
+   * Updates the content container with the provided HTML
+   * @param {string} html - HTML content to display
+   */
+  updateContentContainer(html) {
+    const contentContainer = document.querySelector('.detail-story-content-container');
+    if (contentContainer) {
+      contentContainer.innerHTML = html;
+    }
+  }
+
+  /**
+   * Initializes the back button with a click handler
+   * @param {Function} onBackClick - Callback for back button click
+   */
+  initializeBackButton(onBackClick) {
+    const backButton = document.getElementById('back-to-stories');
+    if (backButton && onBackClick) {
+      backButton.addEventListener('click', (event) => {
+        event.preventDefault();
+        onBackClick();
+      });
+    }
+  }
+
+  /**
+   * Shows loading state in the content container
+   */
+  showLoading() {
+    this.updateContentContainer(this.getLoadingTemplate());
+  }
+
+  /**
+   * Shows error state in the content container
+   * @param {string} message - Error message to display
+   */
+  showError(message) {
+    this.updateContentContainer(this.getErrorTemplate(message));
+  }
+
+  /**
+   * Updates the view with story data
+   * @param {Object} storyData - Story data to display
+   */
+  updateView(storyData) {
+    this.updateContentContainer(this.getDetailTemplate(storyData));
+  }
+
+  /**
+   * Initializes the map with story location data
+   * @param {Object} storyData - Story data containing lat and lon
+   * @param {Object} mapConfig - Map configuration
+   * @returns {Object} Map and marker objects
+   */
+  async initializeMap(storyData, mapConfig) {
+    try {
+      const mapContainer = document.getElementById('detail-map');
+      if (!mapContainer) return { map: null, marker: null };
+
+      const map = L.map('detail-map').setView([storyData.lat, storyData.lon], 10);
+
+      L.tileLayer(
+        `https://api.maptiler.com/maps/${mapConfig.mapStyles.streets}/256/{z}/{x}/{y}.png?key=${mapConfig.apiKey}`,
+        {
+          attribution: '&copy; <a href="https://www.maptiler.com/">MapTiler</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+          maxZoom: 18
+        }
+      ).addTo(map);
+
+      const marker = L.marker([storyData.lat, storyData.lon]).addTo(map);
+
+      // Refresh the map after it's visible
+      setTimeout(() => {
+        map.invalidateSize();
+      }, 100);
+
+      return { map, marker };
+    } catch (error) {
+      console.error('Error initializing map:', error);
+      const mapContainer = document.getElementById('detail-map');
+      if (mapContainer) {
+        mapContainer.innerHTML = '<p class="text-center">Failed to load map</p>';
+      }
+      return { map: null, marker: null };
+    }
+  }
+
+  /**
+   * Updates the map marker popup with location information
+   * @param {Object} marker - Leaflet marker object
+   * @param {Object} storyData - Story data
+   * @param {Object} locationInfo - Location information from geocoding
+   */
+  updateMapMarkerPopup(marker, storyData, locationInfo) {
+    if (!marker) return;
+
+    const { locationString, details } = locationInfo;
+
+    // Create popup content with detailed information
+    const popupContent = `
+      <div class="map-popup-content">
+        <div class="map-popup-title">${storyData.title}</div>
+        ${details ? `
+          <div class="map-popup-details">
+            ${details.place && details.place !== 'Unknown' ? `<div><strong>Place:</strong> ${details.place}</div>` : ''}
+            ${details.county && details.county !== 'Unknown' ? `<div><strong>County:</strong> ${details.county}</div>` : ''}
+            ${details.subregion && details.subregion !== 'Unknown' ? `<div><strong>Region:</strong> ${details.subregion}</div>` : ''}
+            ${details.country && details.country !== 'Unknown' ? `<div><strong>Country:</strong> ${details.country}</div>` : ''}
+          </div>
+        ` : ''}
+      </div>
+    `;
+
+    marker.bindPopup(popupContent, { maxWidth: 300 }).openPopup();
+  }
+
+  /**
+   * Initializes session storage for navigation
+   * @param {string} storyId - Story ID
+   * @param {string} currentPath - Current URL path
+   * @param {string} referrerPath - Referrer URL path
+   */
+  initializeSessionStorage(storyId, currentPath, referrerPath) {
+    sessionStorage.setItem('lastViewedStoryId', storyId);
+
+    const pageMatch = currentPath.match(/#\/page\/(\d+)/);
+    if (pageMatch && pageMatch[1]) {
+      sessionStorage.setItem('lastViewedPage', pageMatch[1]);
+    } else {
+      const referrerPageMatch = referrerPath.match(/page\/(\d+)/);
+      if (referrerPageMatch && referrerPageMatch[1]) {
+        sessionStorage.setItem('lastViewedPage', referrerPageMatch[1]);
+      } else {
+        const currentPage = sessionStorage.getItem('lastViewedPage') || '1';
+        sessionStorage.setItem('lastViewedPage', currentPage);
+      }
+    }
+  }
 }
 
 export default DetailStoryView;

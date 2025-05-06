@@ -155,6 +155,66 @@ class SettingsView {
 
     return map;
   }
+
+  /**
+   * Initializes form with current settings values
+   * @param {Object} currentSettings - Current user settings
+   */
+  initializeForm(currentSettings) {
+    const languageSelect = document.getElementById('language-select');
+    if (languageSelect && currentSettings.language) {
+      languageSelect.value = currentSettings.language;
+    }
+
+    const themeSelect = document.getElementById('theme-select');
+    if (themeSelect && currentSettings.theme) {
+      themeSelect.value = currentSettings.theme;
+    }
+
+    const mapStyleSelect = document.getElementById('map-style-select');
+    if (mapStyleSelect && currentSettings.mapStyle) {
+      mapStyleSelect.value = currentSettings.mapStyle;
+    }
+  }
+
+  /**
+   * Sets up event listeners for settings form elements
+   * @param {Function} onMapStyleChange - Callback for map style change
+   * @param {Function} onSaveSettings - Callback for save button click
+   */
+  setupEventListeners(onMapStyleChange, onSaveSettings) {
+    const mapStyleSelect = document.getElementById('map-style-select');
+    if (mapStyleSelect && onMapStyleChange) {
+      mapStyleSelect.addEventListener('change', (event) => {
+        const selectedStyle = event.target.value;
+        onMapStyleChange(selectedStyle);
+      });
+    }
+
+    const saveButton = document.getElementById('save-settings');
+    if (saveButton && onSaveSettings) {
+      saveButton.addEventListener('click', async () => {
+        await onSaveSettings();
+      });
+    }
+  }
+
+  /**
+   * Gets current settings values from form inputs
+   * @param {Object} currentSettings - Current settings as fallback
+   * @returns {Object} Updated settings object
+   */
+  getFormValues(currentSettings) {
+    const languageSelect = document.getElementById('language-select');
+    const themeSelect = document.getElementById('theme-select');
+    const mapStyleSelect = document.getElementById('map-style-select');
+
+    return {
+      language: languageSelect ? languageSelect.value : currentSettings.language,
+      theme: themeSelect ? themeSelect.value : currentSettings.theme,
+      mapStyle: mapStyleSelect ? mapStyleSelect.value : currentSettings.mapStyle
+    };
+  }
 }
 
 export default SettingsView;

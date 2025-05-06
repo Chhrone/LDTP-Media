@@ -181,7 +181,7 @@
 }
 
 .map-popup-content {
-  width: 220px;
+  width: 250px;
 }
 
 .map-popup-title {
@@ -202,6 +202,23 @@
 
 .map-popup-location i {
   color: var(--orange-accent);
+}
+
+.map-popup-details {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid #eee;
+  font-size: 0.8rem;
+  color: var(--medium-brown);
+}
+
+.map-popup-details div {
+  margin-bottom: 4px;
+}
+
+.map-popup-details strong {
+  color: var(--dark-brown);
+  font-weight: 600;
 }
 
 .map-popup-link {
