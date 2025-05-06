@@ -2,9 +2,9 @@ import CONFIG from '../config';
 
 /**
  * Converts coordinates to location information (place, county, subregion, country)
- * @param {number} lat - Latitude
- * @param {number} lon - Longitude
- * @returns {Object} Location information
+ * @param {number} lat
+ * @param {number} lon
+ * @returns {Object}
  */
 async function reverseGeocode(lat, lon) {
   try {
@@ -57,9 +57,9 @@ async function reverseGeocode(lat, lon) {
 
 /**
  * Gets detailed location information for popup display
- * @param {number} lat - Latitude
- * @param {number} lon - Longitude
- * @returns {Object} Formatted location information
+ * @param {number} lat
+ * @param {number} lon
+ * @returns {Object}
  */
 async function getDetailedLocation(lat, lon) {
   try {
@@ -100,9 +100,9 @@ async function getDetailedLocation(lat, lon) {
 
 /**
  * Gets a simple location string in format "Subregion, Country"
- * @param {number} lat - Latitude
- * @param {number} lon - Longitude
- * @returns {string} Formatted location string
+ * @param {number} lat
+ * @param {number} lon
+ * @returns {string}
  */
 async function getLocationString(lat, lon) {
   try {

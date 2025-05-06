@@ -31,9 +31,10 @@ class HomeView {
           <div id="stories-list" class="stories-list">
             ${featuredStories.map(story => `
               <article class="story-card" data-story-id="${story.id}" style="view-transition-name: story-card-${story.id}">
-                ${story.photo ? `<div class="story-image" style="view-transition-name: story-image-${story.id}">
+                ${story.photo ? `<figure class="story-image" style="view-transition-name: story-image-${story.id}">
                   <img src="${story.photo}" alt="${story.title}" loading="lazy">
-                </div>` : ''}
+                  <figcaption class="visually-hidden">${story.title}</figcaption>
+                </figure>` : ''}
                 <div class="story-content" style="view-transition-name: story-content-${story.id}">
                   <h3 style="view-transition-name: story-title-${story.id}">${story.title}</h3>
                   <p>${story.excerpt}</p>
@@ -46,7 +47,7 @@ class HomeView {
                         <i class="fas fa-map-marker-alt"></i> ${story.location}
                       </div>` : ''}
                       <div class="story-date">
-                        <i class="fas fa-calendar-alt"></i> ${this.formatSimpleDate(story.createdAt)}
+                        <i class="fas fa-calendar-alt"></i> <time datetime="${story.createdAt}">${this.formatSimpleDate(story.createdAt)}</time>
                       </div>
                     </div>
                     <div class="right-info">
@@ -63,7 +64,7 @@ class HomeView {
           ${this._getPaginationTemplate(pagination)}
         </section>
 
-        <section id="map-section" class="map-section" style="view-transition-name: map-section">
+        <aside id="map-section" class="map-section" style="view-transition-name: map-section">
           <h2>Story Locations</h2>
           <div class="map-actions">
             <div class="map-style-controls">
@@ -78,7 +79,7 @@ class HomeView {
             </button>
           </div>
           <div id="map-container" class="map-container"></div>
-        </section>
+        </aside>
       </div>
     `;
   }
@@ -86,10 +87,8 @@ class HomeView {
   _getPaginationTemplate(pagination) {
     const { currentPage, totalPages } = pagination;
 
-    // Generate pagination links
     let paginationLinks = '';
 
-    // First page button
     const firstDisabled = currentPage <= 1 ? 'disabled' : '';
     paginationLinks += `<a href="#/page/1"
                           class="pagination-link pagination-first ${firstDisabled}"
@@ -99,7 +98,6 @@ class HomeView {
                           <i class="fas fa-angle-double-left"></i>
                         </a>`;
 
-    // Previous button
     const prevDisabled = currentPage <= 1 ? 'disabled' : '';
     paginationLinks += `<a href="#/page/${currentPage - 1}"
                           class="pagination-link pagination-prev ${prevDisabled}"
@@ -109,11 +107,9 @@ class HomeView {
                           <i class="fas fa-angle-left"></i>
                         </a>`;
 
-    // Calculate which page numbers to show (only 4)
     let startPage = Math.max(1, currentPage - 1);
     let endPage = Math.min(totalPages, startPage + 3);
 
-    // Adjust if we're near the end
     if (endPage - startPage < 3) {
       startPage = Math.max(1, endPage - 3);
     }
@@ -128,7 +124,6 @@ class HomeView {
                           </a>`;
     }
 
-    // Next button
     const nextDisabled = currentPage >= totalPages ? 'disabled' : '';
     paginationLinks += `<a href="#/page/${currentPage + 1}"
                           class="pagination-link pagination-next ${nextDisabled}"
@@ -138,7 +133,6 @@ class HomeView {
                           <i class="fas fa-angle-right"></i>
                         </a>`;
 
-    // Last page button
     const lastDisabled = currentPage >= totalPages ? 'disabled' : '';
     paginationLinks += `<a href="#/page/${totalPages}"
                           class="pagination-link pagination-last ${lastDisabled}"
@@ -157,11 +151,11 @@ class HomeView {
 
   /**
    * Initializes the map with story markers
-   * @param {Object} options - Map initialization options
-   * @param {Array} options.stories - Array of stories with location data
-   * @param {string} options.currentMapStyle - Current map style
-   * @param {Object} options.mapStyles - Map styles configuration
-   * @param {Object} options.config - Application configuration
+   * @param {Object} options 
+   * @param {Array} options.stories 
+   * @param {string} options.currentMapStyle 
+   * @param {Object} options.mapStyles 
+   * @param {Object} options.config 
    * @returns {Object} Map and markers objects
    */
   async initializeMap(options) {
@@ -170,10 +164,8 @@ class HomeView {
       const mapContainer = document.getElementById('map-container');
       if (!mapContainer) return { map: null, markers: [] };
 
-      // Filter stories with location data for the map
       const storiesWithLocation = stories.filter(story => story.lat && story.lon);
 
-      // Show message if no stories have location data
       if (storiesWithLocation.length === 0) {
         const messageElement = document.createElement('div');
         messageElement.className = 'map-message';
@@ -181,10 +173,9 @@ class HomeView {
         mapContainer.appendChild(messageElement);
       }
 
-      // Initialize the map using MapUtilities
       maptilersdk.config.apiKey = config.MAPTILER_KEY;
 
-      const { map, markers } = MapUtilities.initializeMap({
+      const { map, markers } = await MapUtilities.initializeMap({
         containerId: 'map-container',
         config,
         currentStyle: currentMapStyle,
@@ -192,7 +183,6 @@ class HomeView {
         stories: storiesWithLocation
       });
 
-      // Add a message to inform users about scroll zoom
       this._addZoomInfoMessage(mapContainer);
 
       return { map, markers };
@@ -208,7 +198,7 @@ class HomeView {
 
   /**
    * Adds zoom info message to the map container
-   * @param {HTMLElement} mapContainer - Map container element
+   * @param {HTMLElement} mapContainer 
    */
   _addZoomInfoMessage(mapContainer) {
     const zoomInfoElement = document.createElement('div');
@@ -216,7 +206,6 @@ class HomeView {
     zoomInfoElement.innerHTML = '<i class="fas fa-mouse"></i> Scroll to zoom in/out';
     mapContainer.appendChild(zoomInfoElement);
 
-    // Hide the zoom info after 5 seconds
     setTimeout(() => {
       zoomInfoElement.classList.add('fade-out');
       setTimeout(() => {
@@ -229,7 +218,7 @@ class HomeView {
 
   /**
    * Initializes map style control buttons
-   * @param {Function} onStyleChange - Callback for style change events
+   * @param {Function} onStyleChange 
    */
   initializeMapStyleControls(onStyleChange) {
     const styleButtons = document.querySelectorAll('.map-style-button');
@@ -252,7 +241,7 @@ class HomeView {
 
   /**
    * Initializes the locate me button functionality
-   * @param {Function} onLocateMe - Callback for locate me button click
+   * @param {Function} onLocateMe- Callback for locate me button click
    */
   initializeLocateMeButton(onLocateMe) {
     const locateButton = document.getElementById('locate-me-button');
@@ -300,7 +289,7 @@ class HomeView {
 
   /**
    * Initializes pagination links with event handlers
-   * @param {Function} onPageChange - Callback for page change events
+   * @param {Function} onPageChange
    */
   initializePaginationEvents(onPageChange) {
     NavigationUtilities.setupPaginationLinks(onPageChange);

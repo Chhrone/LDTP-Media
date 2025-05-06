@@ -51,15 +51,16 @@ class DetailStoryView {
               </div>
             ` : ''}
             <div class="detail-story-date">
-              <i class="fas fa-calendar-alt"></i> ${this.formatSimpleDate(story.createdAt)}
+              <i class="fas fa-calendar-alt"></i> <time datetime="${story.createdAt}">${this.formatSimpleDate(story.createdAt)}</time>
             </div>
           </div>
         </div>
 
         ${story.photo ? `
-          <div class="detail-story-image" style="view-transition-name: story-image-${story.id}">
+          <figure class="detail-story-image" style="view-transition-name: story-image-${story.id}">
             <img src="${story.photo}" alt="${story.title}" loading="lazy">
-          </div>
+            <figcaption class="visually-hidden">${story.title}</figcaption>
+          </figure>
         ` : ''}
 
         <div class="detail-story-content" style="view-transition-name: story-content-${story.id}">
@@ -68,10 +69,10 @@ class DetailStoryView {
           </div>
 
           ${story.lat && story.lon ? `
-            <div class="detail-story-map-container">
+            <aside class="detail-story-map-container">
               <h2>Location</h2>
               <div id="detail-map" class="detail-map"></div>
-            </div>
+            </aside>
           ` : ''}
         </div>
 
@@ -97,7 +98,7 @@ class DetailStoryView {
 
   /**
    * Updates the content container with the provided HTML
-   * @param {string} html - HTML content to display
+   * @param {string} html
    */
   updateContentContainer(html) {
     const contentContainer = document.querySelector('.detail-story-content-container');
@@ -108,7 +109,7 @@ class DetailStoryView {
 
   /**
    * Initializes the back button with a click handler
-   * @param {Function} onBackClick - Callback for back button click
+   * @param {Function} onBackClick
    */
   initializeBackButton(onBackClick) {
     const backButton = document.getElementById('back-to-stories');
@@ -129,7 +130,7 @@ class DetailStoryView {
 
   /**
    * Shows error state in the content container
-   * @param {string} message - Error message to display
+   * @param {string} message
    */
   showError(message) {
     this.updateContentContainer(this.getErrorTemplate(message));
@@ -137,7 +138,7 @@ class DetailStoryView {
 
   /**
    * Updates the view with story data
-   * @param {Object} storyData - Story data to display
+   * @param {Object} storyData
    */
   updateView(storyData) {
     this.updateContentContainer(this.getDetailTemplate(storyData));
@@ -145,9 +146,9 @@ class DetailStoryView {
 
   /**
    * Initializes the map with story location data
-   * @param {Object} storyData - Story data containing lat and lon
-   * @param {Object} mapConfig - Map configuration
-   * @returns {Object} Map and marker objects
+   * @param {Object} storyData
+   * @param {Object} mapConfig
+   * @returns {Object}
    */
   async initializeMap(storyData, mapConfig) {
     try {
@@ -184,16 +185,15 @@ class DetailStoryView {
 
   /**
    * Updates the map marker popup with location information
-   * @param {Object} marker - Leaflet marker object
-   * @param {Object} storyData - Story data
-   * @param {Object} locationInfo - Location information from geocoding
+   * @param {Object} marker
+   * @param {Object} storyData
+   * @param {Object} locationInfo
    */
   updateMapMarkerPopup(marker, storyData, locationInfo) {
     if (!marker) return;
 
     const { locationString, details } = locationInfo;
 
-    // Create popup content with detailed information
     const popupContent = `
       <div class="map-popup-content">
         <div class="map-popup-title">${storyData.title}</div>
@@ -213,9 +213,9 @@ class DetailStoryView {
 
   /**
    * Initializes session storage for navigation
-   * @param {string} storyId - Story ID
-   * @param {string} currentPath - Current URL path
-   * @param {string} referrerPath - Referrer URL path
+   * @param {string} storyId
+   * @param {string} currentPath
+   * @param {string} referrerPath
    */
   initializeSessionStorage(storyId, currentPath, referrerPath) {
     sessionStorage.setItem('lastViewedStoryId', storyId);

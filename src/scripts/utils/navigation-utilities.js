@@ -5,10 +5,10 @@
 class NavigationUtilities {
   /**
    * Focuses on a story card by ID with optional highlighting
-   * @param {string} storyId - ID of the story to focus on
-   * @param {number} currentPage - Current page number
-   * @param {boolean} highlight - Whether to highlight the story card
-   * @returns {boolean} Whether the story was found and focused
+   * @param {string} storyId
+   * @param {number} currentPage
+   * @param {boolean} highlight
+   * @returns {boolean}
    */
   static focusOnStory(storyId, currentPage) {
     if (!storyId) return false;
@@ -35,7 +35,7 @@ class NavigationUtilities {
 
   /**
    * Handles returning to a story from the detail page
-   * @param {number} currentPage 
+   * @param {number} currentPage
    */
   static handleReturnToStory(currentPage) {
     const lastViewedStoryId = sessionStorage.getItem('lastViewedStoryId');
@@ -62,7 +62,7 @@ class NavigationUtilities {
 
   /**
    * Sets up pagination links with proper event handling
-   * @param {Function} onPageChange - Callback for page change events
+   * @param {Function} onPageChange
    */
   static setupPaginationLinks(onPageChange) {
     const paginationLinks = document.querySelectorAll('.pagination-link');
@@ -81,8 +81,8 @@ class NavigationUtilities {
 
   /**
    * Sets up smooth scrolling for anchor links
-   * @param {string} buttonSelector 
-   * @param {string} targetSelector 
+   * @param {string} buttonSelector
+   * @param {string} targetSelector
    */
   static setupSmoothScrolling(buttonSelector, targetSelector) {
     const button = document.querySelector(buttonSelector);

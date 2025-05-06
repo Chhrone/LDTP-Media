@@ -32,6 +32,36 @@
   color: var(--dark-brown);
 }
 
+.map-loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.map-loading .loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid var(--cream);
+  border-top: 4px solid var(--orange-accent);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 15px;
+}
+
+.map-loading p {
+  font-size: 1rem;
+  color: var(--dark-brown);
+  font-weight: 500;
+}
+
 .map-actions {
   display: flex;
   justify-content: space-between;
@@ -191,47 +221,64 @@
   color: var(--dark-brown);
 }
 
-.map-popup-location {
+.map-popup-location,
+.map-popup-coordinates {
   display: flex;
   align-items: center;
   gap: 5px;
   font-size: 0.85rem;
-  margin-bottom: 8px;
+  margin: 8px 0;
   color: var(--medium-brown);
+  padding: 4px 0;
+  border-bottom: 1px dashed rgba(212, 137, 68, 0.3);
+  border-top: 1px dashed rgba(212, 137, 68, 0.3);
 }
 
-.map-popup-location i {
+.map-popup-location i,
+.map-popup-coordinates i {
   color: var(--orange-accent);
+  font-size: 1rem;
 }
 
 .map-popup-details {
-  margin-top: 10px;
-  padding-top: 8px;
-  border-top: 1px solid #eee;
+  margin-top: 8px;
   font-size: 0.8rem;
   color: var(--medium-brown);
+  background-color: rgba(245, 240, 235, 0.5);
+  padding: 8px;
+  border-radius: 4px;
 }
 
 .map-popup-details div {
   margin-bottom: 4px;
+  display: flex;
+  align-items: baseline;
 }
 
 .map-popup-details strong {
   color: var(--dark-brown);
   font-weight: 600;
+  min-width: 60px;
+  margin-right: 4px;
 }
 
 .map-popup-link {
   display: inline-block;
-  margin-top: 5px;
+  margin-top: 10px;
   color: var(--orange-accent);
   text-decoration: none;
   font-size: 0.9rem;
   font-weight: 500;
+  padding: 4px 8px;
+  border: 1px solid var(--orange-accent);
+  border-radius: 4px;
+  transition: all 0.2s ease;
 }
 
 .map-popup-link:hover {
-  text-decoration: underline;
+  background-color: var(--orange-accent);
+  color: white;
+  text-decoration: none;
 }
 
 /* Responsive styles for map */

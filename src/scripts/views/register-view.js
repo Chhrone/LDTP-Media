@@ -124,7 +124,7 @@ class RegisterView {
 
   /**
    * Initializes the guest post button with a click handler
-   * @param {Function} onGuestPostClick - Callback for guest post button click
+   * @param {Function} onGuestPostClick
    */
   initializeGuestPostButton(onGuestPostClick) {
     const guestPostButton = document.getElementById('guest-post-button');
@@ -136,7 +136,7 @@ class RegisterView {
 
   /**
    * Initializes the register form with a submit handler
-   * @param {Function} onSubmit - Callback for form submission
+   * @param {Function} onSubmit 
    */
   initializeRegisterForm(onSubmit) {
     const registerForm = document.getElementById('register-form');
@@ -160,7 +160,7 @@ class RegisterView {
 
   /**
    * Updates the navigation UI after successful registration
-   * @param {Object} userData - User data from authentication
+   * @param {Object} userData 
    */
   updateNavigationUI(userData) {
     const navList = document.getElementById('nav-list');
@@ -187,8 +187,8 @@ class RegisterView {
 
   /**
    * Navigates to a new page with view transitions if available
-   * @param {string} path - Path to navigate to
-   * @param {boolean} reload - Whether to reload the page after navigation
+   * @param {string} path 
+   * @param {boolean} reload 
    */
   navigateTo(path, reload = false) {
     if (document.startViewTransition) {

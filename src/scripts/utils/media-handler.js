@@ -5,15 +5,15 @@
 class MediaHandler {
   /**
    * Initializes camera functionality
-   * @param {Object} options - Configuration options
-   * @param {string} options.videoElementId - ID of the video element
-   * @param {string} options.canvasElementId - ID of the canvas element
-   * @param {string} options.previewElementId - ID of the preview container
-   * @param {string} options.startButtonId - ID of the start camera button
-   * @param {string} options.captureButtonId - ID of the capture photo button
-   * @param {string} options.retakeButtonId - ID of the retake button
-   * @param {string} options.imageInputId - ID of the hidden image input
-   * @returns {Object} Object with camera control methods
+   * @param {Object} options
+   * @param {string} options.videoElementId
+   * @param {string} options.canvasElementId
+   * @param {string} options.previewElementId
+   * @param {string} options.startButtonId
+   * @param {string} options.captureButtonId
+   * @param {string} options.retakeButtonId
+   * @param {string} options.imageInputId
+   * @returns {Object}
    */
   static initializeCamera(options) {
     const {
@@ -133,14 +133,14 @@ class MediaHandler {
 
   /**
    * Initializes file upload functionality
-   * @param {Object} options - Configuration options
-   * @param {string} options.fileInputId - ID of the file input element
-   * @param {string} options.previewElementId - ID of the preview container
-   * @param {string} options.imageInputId - ID of the hidden image input
+   * @param {Object} options
+   * @param {string} options.fileInputId
+   * @param {string} options.previewElementId
+   * @param {string} options.imageInputId
    */
   static initializeFileUpload(options) {
     const { fileInputId, previewElementId, imageInputId } = options;
-    
+
     const fileInput = document.getElementById(fileInputId);
     const uploadPreview = document.getElementById(previewElementId);
 
@@ -189,8 +189,8 @@ class MediaHandler {
 
   /**
    * Stops camera stream and cleans up resources
-   * @param {MediaStream} stream - The active media stream
-   * @param {HTMLVideoElement} videoElement - The video element
+   * @param {MediaStream} stream
+   * @param {HTMLVideoElement} videoElement
    */
   static stopCameraStream(stream, videoElement) {
     if (stream) {

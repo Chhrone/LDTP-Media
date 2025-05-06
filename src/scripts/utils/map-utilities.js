@@ -7,15 +7,15 @@
 class MapUtilities {
   /**
    * Initializes a Leaflet map with base configuration
-   * @param {Object} options - Map configuration options
-   * @param {string} options.containerId - ID of the map container element
-   * @param {Object} options.config - Map configuration with API key, styles, etc.
-   * @param {string} options.currentStyle - Current map style to use
-   * @param {Object} options.mapStyles - Map of style names to style IDs
-   * @param {Array} options.stories - Array of stories with location data
-   * @returns {Object} Map instance and markers array
+   * @param {Object} options
+   * @param {string} options.containerId
+   * @param {Object} options.config
+   * @param {string} options.currentStyle
+   * @param {Object} options.mapStyles
+   * @param {Array} options.stories
+   * @returns {Object}
    */
-  static initializeMap(options) {
+  static async initializeMap(options) {
     const { containerId, config, currentStyle, mapStyles, stories = [] } = options;
 
     const mapContainer = document.getElementById(containerId);
@@ -34,54 +34,109 @@ class MapUtilities {
       maxZoom: 18
     }).addTo(map);
 
-    const markers = MapUtilities.addStoryMarkers(map, storiesWithLocation);
+    // Add loading indicator to the map container
+    const loadingIndicator = document.createElement('div');
+    loadingIndicator.className = 'map-loading';
+    loadingIndicator.innerHTML = '<div class="loading-spinner"></div><p>Loading location data...</p>';
+    mapContainer.appendChild(loadingIndicator);
 
-    if (markers.length > 0) {
-      const group = new L.featureGroup(markers);
-      map.fitBounds(group.getBounds().pad(0.1));
+    try {
+      const markers = await MapUtilities.addStoryMarkers(map, storiesWithLocation);
+
+      if (markers.length > 0) {
+        const group = new L.featureGroup(markers);
+        map.fitBounds(group.getBounds().pad(0.1));
+      }
+
+      L.control.zoom({
+        position: 'bottomright'
+      }).addTo(map);
+
+      if (loadingIndicator.parentNode) {
+        loadingIndicator.remove();
+      }
+
+      return { map, markers };
+    } catch (error) {
+      console.error('Error initializing map:', error);
+
+      if (loadingIndicator.parentNode) {
+        loadingIndicator.remove();
+      }
+
+      const errorMessage = document.createElement('div');
+      errorMessage.className = 'map-message';
+      errorMessage.innerHTML = '<p>Error loading map data. Please try again later.</p>';
+      mapContainer.appendChild(errorMessage);
+
+      return { map, markers: [] };
     }
-
-    L.control.zoom({
-      position: 'bottomright'
-    }).addTo(map);
-
-    return { map, markers };
   }
 
   /**
    * Adds markers for stories with location data
-   * @param {Object} map - Leaflet map instance
-   * @param {Array} stories - Array of stories with location data
-   * @returns {Array} Array of created markers
+   * @param {Object} map
+   * @param {Array} stories
+   * @returns {Array}
    */
-  static addStoryMarkers(map, stories) {
+  static async addStoryMarkers(map, stories) {
     const markers = [];
 
-    stories.forEach(story => {
+    // Import the geocoding service dynamically to avoid circular dependencies
+    const { getDetailedLocation } = await import('./geocoding-service');
+
+    for (const story of stories) {
       if (story.lat && story.lon) {
         const marker = L.marker([story.lat, story.lon]).addTo(map);
 
-        const popupContent = `
-          <div class="map-popup-content">
-            <div class="map-popup-title">${story.title}</div>
-            <a href="#/story/${story.id}" class="map-popup-link">Read Story</a>
-          </div>
-        `;
+        try {
+          const { locationString, details } = await getDetailedLocation(story.lat, story.lon);
 
-        marker.bindPopup(popupContent);
+          const popupContent = `
+            <div class="map-popup-content">
+              <div class="map-popup-title">${story.title}</div>
+              <div class="map-popup-location">
+                <i class="fas fa-map-marker-alt"></i> ${locationString}
+              </div>
+              ${details ? `
+                <div class="map-popup-details">
+                  ${details.place && details.place !== 'Unknown' ? `<div><strong>Place:</strong> ${details.place}</div>` : ''}
+                  ${details.county && details.county !== 'Unknown' ? `<div><strong>County:</strong> ${details.county}</div>` : ''}
+                  ${details.subregion && details.subregion !== 'Unknown' ? `<div><strong>Region:</strong> ${details.subregion}</div>` : ''}
+                  ${details.country && details.country !== 'Unknown' ? `<div><strong>Country:</strong> ${details.country}</div>` : ''}
+                </div>
+              ` : ''}
+              <a href="#/story/${story.id}" class="map-popup-link">Read Story</a>
+            </div>
+          `;
+
+          marker.bindPopup(popupContent, { maxWidth: 300 });
+        } catch (error) {
+          console.error('Error getting location information for marker:', error);
+
+          const fallbackPopupContent = `
+            <div class="map-popup-content">
+              <div class="map-popup-title">${story.title}</div>
+              <a href="#/story/${story.id}" class="map-popup-link">Read Story</a>
+            </div>
+          `;
+
+          marker.bindPopup(fallbackPopupContent);
+        }
+
         markers.push(marker);
       }
-    });
+    }
 
     return markers;
   }
 
   /**
    * Updates the map style
-   * @param {Object} map - Leaflet map instance
-   * @param {string} style - Style name to apply
-   * @param {Object} mapStyles - Map of style names to style IDs
-   * @param {string} apiKey - MapTiler API key
+   * @param {Object} map
+   * @param {string} style
+   * @param {Object} mapStyles
+   * @param {string} apiKey
    */
   static updateMapStyle(map, style, mapStyles, apiKey) {
     if (!map) return;
@@ -100,11 +155,11 @@ class MapUtilities {
 
   /**
    * Creates a user location marker on the map
-   * @param {Object} map - Leaflet map instance
-   * @param {number} latitude - User's latitude
-   * @param {number} longitude - User's longitude
-   * @param {Object} existingMarker - Existing marker to update (optional)
-   * @returns {Object} The created or updated marker
+   * @param {Object} map
+   * @param {number} latitude
+   * @param {number} longitude
+   * @param {Object} existingMarker
+   * @returns {Object}
    */
   static async createUserLocationMarker(map, latitude, longitude, existingMarker = null) {
     if (!map) return null;
@@ -123,16 +178,41 @@ class MapUtilities {
     const marker = L.marker([latitude, longitude], { icon: userIcon }).addTo(map);
 
     try {
-      // Create popup content without location string
+      const { getDetailedLocation } = await import('./geocoding-service');
+
+      const { locationString, details } = await getDetailedLocation(latitude, longitude);
+
       const popupContent = `
         <div class="map-popup-content">
           <div class="map-popup-title">Your Location</div>
+          <div class="map-popup-location">
+            <i class="fas fa-map-marker-alt"></i> ${locationString}
+          </div>
+          ${details ? `
+            <div class="map-popup-details">
+              ${details.place && details.place !== 'Unknown' ? `<div><strong>Place:</strong> ${details.place}</div>` : ''}
+              ${details.county && details.county !== 'Unknown' ? `<div><strong>County:</strong> ${details.county}</div>` : ''}
+              ${details.subregion && details.subregion !== 'Unknown' ? `<div><strong>Region:</strong> ${details.subregion}</div>` : ''}
+              ${details.country && details.country !== 'Unknown' ? `<div><strong>Country:</strong> ${details.country}</div>` : ''}
+            </div>
+          ` : ''}
         </div>
       `;
-      marker.bindPopup(popupContent);
+
+      marker.bindPopup(popupContent, { maxWidth: 300 });
     } catch (error) {
-      console.error('Error getting location string:', error);
-      marker.bindPopup('<div class="map-popup-content"><div class="map-popup-title">Your Location</div></div>');
+      console.error('Error getting location information for user marker:', error);
+
+      const fallbackPopupContent = `
+        <div class="map-popup-content">
+          <div class="map-popup-title">Your Location</div>
+          <div class="map-popup-coordinates">
+            <i class="fas fa-map-pin"></i> Lat: ${latitude.toFixed(6)}, Lon: ${longitude.toFixed(6)}
+          </div>
+        </div>
+      `;
+
+      marker.bindPopup(fallbackPopupContent);
     }
 
     return marker;
@@ -140,9 +220,9 @@ class MapUtilities {
 
   /**
    * Shows a notification in the map container
-   * @param {string} message - Message to display
-   * @param {string} containerId - ID of the map container
-   * @param {number} duration - Duration in milliseconds to show the notification
+   * @param {string} message
+   * @param {string} containerId
+   * @param {number} duration
    */
   static showMapNotification(message, containerId, duration = 5000) {
     const notification = document.createElement('div');

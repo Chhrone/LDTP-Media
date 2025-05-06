@@ -37,7 +37,6 @@ class NavbarHandler {
       event.stopPropagation();
     });
 
-    // User dropdown toggle
     if (this._userButton) {
       this._userButton.addEventListener("click", (event) => {
         this._dropdownContent.classList.toggle("show");
@@ -49,7 +48,6 @@ class NavbarHandler {
       });
     }
 
-    // Navigation link click handling
     const navLinks = document.querySelectorAll('.nav-list a, .dropdown-content a');
     navLinks.forEach(link => {
       link.addEventListener('click', () => {
@@ -59,7 +57,6 @@ class NavbarHandler {
       });
     });
 
-    // Close navbar when clicking outside
     document.addEventListener("click", (event) => {
       if (
         !this._navigationDrawer.contains(event.target) &&

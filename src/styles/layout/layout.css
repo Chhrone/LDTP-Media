@@ -102,7 +102,7 @@ header {
 
 /* MAIN */
 .main-content {
-  flex: 1; 
+  flex: 1;
 }
 
 /* Container Styles */
@@ -190,12 +190,15 @@ header {
   margin-top: 40px;
 }
 
-.footer-simple {
+.footer-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   text-align: center;
   font-size: 0.9rem;
 }
 
-.footer-simple p {
+.footer-copyright p {
   line-height: 1.5;
 }
 

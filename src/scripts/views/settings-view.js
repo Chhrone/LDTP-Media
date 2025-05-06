@@ -99,7 +99,6 @@ class SettingsView {
   }
 
   showSuccessMessage(message) {
-    // Using SweetAlert2 for notifications
     Swal.fire({
       title: 'Success!',
       text: message,
@@ -110,7 +109,6 @@ class SettingsView {
   }
 
   showErrorMessage(message) {
-    // Using SweetAlert2 for notifications
     Swal.fire({
       title: 'Error!',
       text: message,
@@ -134,10 +132,8 @@ class SettingsView {
     const mapPreview = document.getElementById('map-preview');
     if (!mapPreview) return;
 
-    // Clear previous map instance if exists
     mapPreview.innerHTML = '';
 
-    // Initialize the map preview
     const map = L.map('map-preview', {
       zoomControl: false,
       attributionControl: false,
@@ -145,7 +141,6 @@ class SettingsView {
       scrollWheelZoom: false
     }).setView(mapConfig.defaultCenter, mapConfig.defaultZoom);
 
-    // Add the selected tile layer
     L.tileLayer(
       `https://api.maptiler.com/maps/${mapConfig.mapStyles[style]}/256/{z}/{x}/{y}.png?key=${mapConfig.apiKey}`,
       {
@@ -158,7 +153,7 @@ class SettingsView {
 
   /**
    * Initializes form with current settings values
-   * @param {Object} currentSettings - Current user settings
+   * @param {Object} currentSettings 
    */
   initializeForm(currentSettings) {
     const languageSelect = document.getElementById('language-select');
@@ -179,8 +174,8 @@ class SettingsView {
 
   /**
    * Sets up event listeners for settings form elements
-   * @param {Function} onMapStyleChange - Callback for map style change
-   * @param {Function} onSaveSettings - Callback for save button click
+   * @param {Function} onMapStyleChange 
+   * @param {Function} onSaveSettings 
    */
   setupEventListeners(onMapStyleChange, onSaveSettings) {
     const mapStyleSelect = document.getElementById('map-style-select');
@@ -201,8 +196,8 @@ class SettingsView {
 
   /**
    * Gets current settings values from form inputs
-   * @param {Object} currentSettings - Current settings as fallback
-   * @returns {Object} Updated settings object
+   * @param {Object} currentSettings 
+   * @returns {Object} 
    */
   getFormValues(currentSettings) {
     const languageSelect = document.getElementById('language-select');

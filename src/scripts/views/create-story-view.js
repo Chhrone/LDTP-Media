@@ -130,15 +130,15 @@ class CreateStoryView {
 
   /**
    * Initializes the map component with click handlers, style selector, and location features
-   * @param {Object} mapConfig - Configuration for the map
-   * @param {Function} onMapClick - Callback for map click events
-   * @param {Function} onStyleChange - Callback for map style changes
-   * @returns {Object} Map and marker objects
+   * @param {Object} mapConfig 
+   * @param {Function} onMapClick
+   * @param {Function} onStyleChange 
+   * @returns {Object} 
    */
   /**
    * Updates the location values in the form
-   * @param {number} lat - Latitude value
-   * @param {number} lng - Longitude value
+   * @param {number} lat 
+   * @param {number} lng 
    */
   updateLocationValues(lat, lng) {
     document.getElementById('lat').value = lat;
@@ -147,13 +147,12 @@ class CreateStoryView {
 
   /**
    * Initializes the map component with click handlers, style selector, and location features
-   * @param {Object} mapConfig - Configuration for the map
-   * @param {Function} onMapClick - Callback for map click events
-   * @param {Function} onStyleChange - Callback for map style changes
-   * @returns {Object} Map and marker objects
+   * @param {Object} mapConfig 
+   * @param {Function} onMapClick 
+   * @param {Function} onStyleChange 
+   * @returns {Object} 
    */
   async initializeMap(mapConfig, onMapClick, onStyleChange) {
-    // Initialize the map using MapHandler
     const { map, marker } = await MapHandler.initializeMap({
       mapElementId: 'create-map',
       mapConfig,
@@ -366,22 +365,19 @@ class CreateStoryView {
 
   /**
    * Initializes event listeners for page navigation and cleanup
-   * @param {Function} onBeforeUnload - Callback for beforeunload event
-   * @param {Function} onHashChange - Callback for hashchange event
-   * @param {Function} onUnload - Callback for unload event
+   * @param {Function} onBeforeUnload 
+   * @param {Function} onHashChange 
+   * @param {Function} onUnload 
    */
   initializePageEvents(onBeforeUnload, onHashChange, onUnload) {
-    // Add event listener for beforeunload event
+
     if (onBeforeUnload) {
       window.addEventListener('beforeunload', onBeforeUnload);
     }
-
-    // Add event listener for hashchange event
     if (onHashChange) {
       window.addEventListener('hashchange', onHashChange);
     }
 
-    // Add event listener for unload event
     if (onUnload) {
       document.addEventListener('DOMContentLoaded', () => {
         window.addEventListener('unload', onUnload);

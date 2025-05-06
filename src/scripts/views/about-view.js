@@ -172,18 +172,15 @@ class AboutView {
   _copyToClipboard(text, element) {
     navigator.clipboard.writeText(text)
       .then(() => {
-        // Show copied feedback
         const tooltip = element.querySelector('.copy-tooltip');
         tooltip.textContent = 'Copied!';
         element.classList.add('copied');
 
-        // Reset after 2 seconds
         setTimeout(() => {
           tooltip.textContent = 'Click to copy';
           element.classList.remove('copied');
         }, 2000);
 
-        // Show SweetAlert notification
         Swal.fire({
           title: 'Color Copied!',
           text: `${text} has been copied to clipboard`,
@@ -198,7 +195,6 @@ class AboutView {
       .catch(err => {
         console.error('Could not copy text: ', err);
 
-        // Show error notification
         Swal.fire({
           title: 'Copy Failed',
           text: 'Could not copy to clipboard',
