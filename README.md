@@ -31,6 +31,16 @@ The project follows an MVP (Model-View-Presenter) architecture:
 - **Models**: Handle data and API interactions
 - **Views**: Render the UI components
 - **Presenters**: Connect models and views, handling business logic
+- **Utils**: Reusable utility functions and handlers
+
+### Code Organization
+
+The codebase is organized with clean code principles:
+
+- **Separation of Concerns**: Each component has a single responsibility
+- **Modular Design**: Functionality is extracted into reusable modules
+- **Consistent Naming**: Clear and descriptive naming conventions
+- **Minimal Comments**: Comments only for complex logic, self-documenting code
 
 ## 🚀 Getting Started
 
@@ -91,12 +101,23 @@ The application is fully responsive and works on all devices, from mobile phones
 - Multiple map styles to choose from
 - Location information on hover
 - "Locate me" functionality
+- Reusable map components with MapHandler and MapUtilities
 
 ## 📷 Media Features
 
 - Camera integration using MediaStream
 - Image upload with compression options
 - Image preview before posting
+- Modular media handling with MediaHandler
+
+## 🧩 Utility Modules
+
+- **NavbarHandler**: Manages navigation bar interactions and authentication UI
+- **MapUtilities**: Reusable map functionality across different pages
+- **MediaHandler**: Camera and file upload functionality
+- **NavigationUtilities**: Page navigation and story focus
+- **PageTransitionHandler**: Smooth transitions between pages
+- **AccessibilityHandler**: Keyboard navigation and accessibility features
 
 ## 👥 About
 
