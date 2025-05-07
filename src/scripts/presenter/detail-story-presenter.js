@@ -28,7 +28,6 @@ class DetailStoryPage {
   }
 
   async afterRender() {
-    // Show loading state
     this._view.showLoading();
 
     try {
@@ -38,25 +37,19 @@ class DetailStoryPage {
         throw new Error('Story ID not found');
       }
 
-      // Initialize session storage for navigation
       this._view.initializeSessionStorage(
         id,
         window.location.hash,
         document.referrer
       );
 
-      // Fetch story data
       const storyData = await this._model.getStoryById(id);
-
-      // Update the view with story data
       this._view.updateView(storyData);
 
-      // Initialize map if location data exists
       if (storyData.lat && storyData.lon) {
         await this._initMap(storyData);
       }
 
-      // Initialize back button
       this._initBackButton();
     } catch (error) {
       console.error('Error rendering detail story page:', error);
@@ -77,18 +70,12 @@ class DetailStoryPage {
 
   async _initMap(storyData) {
     try {
-      // Initialize map through view
       const { map, marker } = await this._view.initializeMap(storyData, this._mapConfig);
-
-      // Store map and marker references
       this._map = map;
       this._marker = marker;
 
       if (map && marker) {
-        // Get detailed location information
         const locationInfo = await getDetailedLocation(storyData.lat, storyData.lon);
-
-        // Update marker popup with location information
         this._view.updateMapMarkerPopup(marker, storyData, locationInfo);
       }
     } catch (error) {

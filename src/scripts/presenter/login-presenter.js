@@ -38,12 +38,10 @@ class LoginPage {
     return this._view.getTemplate();
   }
   async afterRender() {
-    // Initialize guest post button
     this._view.initializeGuestPostButton(() => {
       this._view.navigateTo('#/guest-story');
     });
 
-    // Initialize login form
     this._view.initializeLoginForm(async (loginData) => {
       try {
         this._view.showLoading();

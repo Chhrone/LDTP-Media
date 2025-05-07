@@ -39,37 +39,27 @@ class RegisterPage {
   }
 
   async afterRender() {
-    // Initialize guest post button
     this._view.initializeGuestPostButton(() => {
       this._view.navigateTo('#/guest-story');
     });
 
-    // Initialize register form
     this._view.initializeRegisterForm(async (registerData) => {
       try {
-        // Show loading animation
         this._view.showLoading();
-
-        // Start the loading message animation
         this._startLoadingAnimation();
 
-        // Register the user
         await authPresenter.register(registerData);
 
-        // Auto-login after successful registration
         await authPresenter.login({
           email: registerData.email,
           password: registerData.password,
         });
 
-        // Add a small delay for better UX
         await sleep(1000);
 
-        // Update navigation UI
         const userData = AuthHelper.getUserData();
         this._view.updateNavigationUI(userData);
 
-        // Navigate to homepage with view transitions
         this._view.navigateTo('#/', true);
       } catch (error) {
         console.error('Registration error:', error);
@@ -80,12 +70,10 @@ class RegisterPage {
   }
 
   async _startLoadingAnimation() {
-    // Always start with "Creating your account..."
     this._view.updateLoadingText('Creating your account...');
     await sleep(1500);
     const remainingMessages = this._loadingMessages.filter(msg => msg !== 'Creating your account...');
 
-    // Shuffle the remaining loading messages to display them in random order
     const shuffledMessages = shuffleArray(remainingMessages);
     let messageIndex = 0;
 

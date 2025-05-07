@@ -25,7 +25,6 @@ class CreateStoryPage {
   }
 
   async render() {
-    // Check if user is logged in, redirect to login if not
     if (!AuthHelper.checkAuth()) {
       return '';
     }
@@ -34,36 +33,28 @@ class CreateStoryPage {
   }
 
   async afterRender() {
-    // Initialize camera functionality
     this._cameraController = this._view.initializeCamera();
 
-    // Initialize map functionality
     this._mapController = await this._view.initializeMap(
       this._mapConfig,
       this._handleMapClick.bind(this),
       this._handleStyleChange.bind(this)
     );
 
-    // Initialize form submission
     this._view.initializeForm(this._handleSubmit.bind(this));
 
-    // Create event handlers
     const handleBeforeUnload = () => {
-      console.log('beforeunload event - stopping camera');
       this._stopCamera();
     };
 
     this._hashChangeHandler = () => {
-      console.log('hashchange event - stopping camera');
       this._stopCamera();
     };
 
     const handleUnload = () => {
-      console.log('unload event - stopping camera');
       this._stopCamera();
     };
 
-    // Initialize page events through the view
     this._view.initializePageEvents(
       handleBeforeUnload,
       this._hashChangeHandler,
@@ -72,19 +63,16 @@ class CreateStoryPage {
   }
 
   _handleMapClick(lat, lng) {
-    // Use the view to update location values
     this._view.updateLocationValues(lat, lng);
   }
 
   _handleStyleChange(style, map) {
-    // Remove current tile layer
     map.eachLayer(layer => {
       if (layer instanceof L.TileLayer) {
         map.removeLayer(layer);
       }
     });
 
-    // Add new tile layer
     L.tileLayer(
       `https://api.maptiler.com/maps/${this._mapConfig.mapStyles[style]}/256/{z}/{x}/{y}.png?key=${this._mapConfig.apiKey}`,
       {
@@ -98,7 +86,6 @@ class CreateStoryPage {
 
   async _handleSubmit(formData) {
     try {
-      // Check if the image is large and might need compression
       const photoFile = formData.get('photo');
       if (photoFile && photoFile instanceof File && photoFile.size > 900 * 1024) {
         Swal.fire({
@@ -110,7 +97,6 @@ class CreateStoryPage {
           }
         });
       } else {
-        // Show regular loading state
         Swal.fire({
           title: 'Uploading Story',
           text: 'Please wait...',
@@ -121,10 +107,8 @@ class CreateStoryPage {
         });
       }
 
-      // Submit the story (compression happens in the model)
       await this._model.createStory(formData);
 
-      // Show success message
       Swal.fire({
         title: 'Success!',
         text: 'Your story has been uploaded successfully.',
@@ -136,7 +120,6 @@ class CreateStoryPage {
     } catch (error) {
       console.error('Error creating story:', error);
 
-      // Check if it's a payload size error
       if (error.message && error.message.includes('Payload content length greater than maximum allowed')) {
         Swal.fire({
           title: 'Image Too Large',
@@ -157,21 +140,13 @@ class CreateStoryPage {
 
   _stopCamera() {
     if (this._cameraController && this._cameraController.stopCamera) {
-      console.log('Stopping camera from create-story-presenter');
       this._cameraController.stopCamera();
     }
   }
 
-  // Method to clean up resources when the page is destroyed
   destroy() {
-    console.log('Destroying create-story-presenter');
-
-    // Clean up camera resources
     this._stopCamera();
 
-    // Note: The event listeners added through initializePageEvents will be automatically
-    // removed when navigating to another page, as they're bound to the current page's DOM.
-    // However, we still need to remove the hashchange event listener explicitly.
     if (this._hashChangeHandler) {
       window.removeEventListener('hashchange', this._hashChangeHandler);
     }

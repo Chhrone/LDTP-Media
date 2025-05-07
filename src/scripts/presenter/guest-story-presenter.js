@@ -24,12 +24,10 @@ class GuestStoryPage {
   }
 
   async render() {
-    // No auth check for guest story
     return this._view.getTemplate();
   }
 
   async afterRender() {
-    // Initialize camera functionality
     this._cameraController = this._view.initializeCamera();
 
     this._mapController = await this._view.initializeMap(
@@ -38,26 +36,20 @@ class GuestStoryPage {
       this._handleStyleChange.bind(this)
     );
 
-    // Initialize form submission
     this._view.initializeForm(this._handleSubmit.bind(this));
 
-    // Create event handlers
     const handleBeforeUnload = () => {
-      console.log('beforeunload event - stopping camera');
       this._stopCamera();
     };
 
     this._hashChangeHandler = () => {
-      console.log('hashchange event - stopping camera');
       this._stopCamera();
     };
 
     const handleUnload = () => {
-      console.log('unload event - stopping camera');
       this._stopCamera();
     };
 
-    // Initialize page events through the view
     this._view.initializePageEvents(
       handleBeforeUnload,
       this._hashChangeHandler,
@@ -66,7 +58,6 @@ class GuestStoryPage {
   }
 
   _handleMapClick(lat, lng) {
-    // Use the view to update location values
     this._view.updateLocationValues(lat, lng);
   }
 
@@ -88,10 +79,8 @@ class GuestStoryPage {
 
   async _handleSubmit(formData) {
     try {
-      // Check if the image is large and might need compression
       const photoFile = formData.get('photo');
       if (photoFile && photoFile instanceof File && photoFile.size > 900 * 1024) {
-        // Show compression notification
         Swal.fire({
           title: 'Processing Image',
           text: 'Your image is being compressed to meet size requirements...',
@@ -101,7 +90,6 @@ class GuestStoryPage {
           }
         });
       } else {
-        // Show regular loading state
         Swal.fire({
           title: 'Uploading Story',
           text: 'Please wait...',
@@ -114,7 +102,6 @@ class GuestStoryPage {
 
       await this._model.createGuestStory(formData);
 
-      // Show success message
       Swal.fire({
         title: 'Success!',
         text: 'Your story has been uploaded successfully.',
@@ -126,7 +113,6 @@ class GuestStoryPage {
     } catch (error) {
       console.error('Error creating story:', error);
 
-      // Check if it's a payload size error
       if (error.message && error.message.includes('Payload content length greater than maximum allowed')) {
         Swal.fire({
           title: 'Image Too Large',
@@ -135,7 +121,6 @@ class GuestStoryPage {
           confirmButtonText: 'OK'
         });
       } else {
-        // Show generic error message
         Swal.fire({
           title: 'Error',
           text: error.message || 'Failed to upload story. Please try again.',
@@ -148,21 +133,13 @@ class GuestStoryPage {
 
   _stopCamera() {
     if (this._cameraController && this._cameraController.stopCamera) {
-      console.log('Stopping camera from guest-story-presenter');
       this._cameraController.stopCamera();
     }
   }
 
-  // Method to clean up resources when the page is destroyed
   destroy() {
-    console.log('Destroying guest-story-presenter');
-
-    // Clean up camera resources
     this._stopCamera();
 
-    // Note: The event listeners added through initializePageEvents will be automatically
-    // removed when navigating to another page, as they're bound to the current page's DOM.
-    // However, we still need to remove the hashchange event listener explicitly.
     if (this._hashChangeHandler) {
       window.removeEventListener('hashchange', this._hashChangeHandler);
     }

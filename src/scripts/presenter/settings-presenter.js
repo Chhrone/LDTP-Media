@@ -30,16 +30,9 @@ class SettingsPage {
       const userData = this._model.getUserData();
       this._currentSettings = await this._model.getSettings();
 
-      // Update profile information
       this._view.updateProfileInfo(userData);
-
-      // Initialize form with current settings
       this._view.initializeForm(this._currentSettings);
-
-      // Initialize map preview
       this._initializeMapPreview();
-
-      // Setup event listeners
       this._setupEventListeners();
     } catch (error) {
       console.error('Error initializing settings page:', error);
@@ -52,13 +45,10 @@ class SettingsPage {
   }
 
   _setupEventListeners() {
-    // Setup map style change event
     this._view.setupEventListeners(
-      // Map style change callback
       (selectedStyle) => {
         this._mapPreview = this._view.updateMapPreview(this._mapConfig, selectedStyle);
       },
-      // Save settings callback
       async () => {
         await this._saveSettings();
       }
@@ -73,10 +63,7 @@ class SettingsPage {
     try {
       this._view.showLoading();
 
-      // Get form values from view
       const settings = this._view.getFormValues(this._currentSettings);
-
-      // Update settings in model
       const result = await this._model.updateSettings(settings);
       this._view.hideLoading();
 
@@ -84,12 +71,10 @@ class SettingsPage {
         this._view.showErrorMessage(result.message);
       } else {
         this._view.showSuccessMessage(result.message);
-        
-        // Store current settings
+
         const previousTheme = this._currentSettings.theme;
         this._currentSettings = settings;
 
-        // Apply theme if changed
         if (settings.theme !== previousTheme) {
           this._applyTheme(settings.theme);
         }
@@ -101,8 +86,8 @@ class SettingsPage {
     }
   }
 
-  _applyTheme(theme) {
-    console.log(`Theme changed to: ${theme}`);
+  _applyTheme() {
+    // Theme application is handled by CSS
   }
 }
 

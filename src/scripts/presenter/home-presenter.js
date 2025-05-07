@@ -55,22 +55,11 @@ class HomePage {
    * Initializes components after the page is rendered
    */
   async afterRender() {
-    // Initialize pagination events
     this._initPaginationEvents();
-
-    // Initialize map
     await this._initMap();
-
-    // Initialize map style controls
     this._initMapStyleControls();
-
-    // Initialize locate me button
     this._initLocateMeButton();
-
-    // Initialize hero CTA events
     this._initHeroCTAEvents();
-
-    // Handle return to story
     NavigationUtilities.handleReturnToStory(this._currentPage);
   }
 
@@ -87,7 +76,6 @@ class HomePage {
   _initLocateMeButton() {
     this._view.initializeLocateMeButton(async (latitude, longitude) => {
       if (this._map) {
-        // Create or update user location marker
         this._userLocationMarker = await MapUtilities.createUserLocationMarker(
           this._map,
           latitude,
@@ -95,13 +83,11 @@ class HomePage {
           this._userLocationMarker
         );
 
-        // Fly to user location
         this._map.flyTo([latitude, longitude], 13, {
           animate: true,
           duration: 1.5
         });
 
-        // Open popup after animation completes
         setTimeout(() => {
           if (this._userLocationMarker) {
             this._userLocationMarker.openPopup();
@@ -116,11 +102,9 @@ class HomePage {
    */
   async _initMap() {
     try {
-      // Get stories data for the current page
       const data = await this._model.getHomeData(this._currentPage);
       const stories = data.featuredStories;
 
-      // Initialize map through view
       const { map, markers } = await this._view.initializeMap({
         stories,
         currentMapStyle: this._currentMapStyle,
@@ -128,7 +112,6 @@ class HomePage {
         config: CONFIG
       });
 
-      // Store map and markers references
       this._map = map;
       this._markers = markers;
     } catch (error) {
@@ -160,7 +143,6 @@ class HomePage {
   _initPaginationEvents() {
     this._view.initializePaginationEvents((page) => {
       if (page !== this._currentPage) {
-        // Clean up map before navigation
         if (this._map) {
           this._map.remove();
           this._map = null;
@@ -168,7 +150,6 @@ class HomePage {
           this._userLocationMarker = null;
         }
 
-        // Navigate to the new page using view transitions if available
         if (document.startViewTransition) {
           document.startViewTransition(() => {
             window.location.hash = `/page/${page}`;
