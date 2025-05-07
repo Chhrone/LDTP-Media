@@ -32,7 +32,22 @@ class MapHandler {
     // Add click event to the map
     map.on('click', async (e) => {
       const { lat, lng } = e.latlng;
-      marker = await MapHandler.updateOrCreateMarker(map, marker, lat, lng);
+
+      // Get the current marker from the map
+      let currentMarker = null;
+      map.eachLayer(layer => {
+        if (layer instanceof L.Marker) {
+          currentMarker = layer;
+        }
+      });
+
+      // If there's already a marker on the map, remove it
+      if (currentMarker) {
+        map.removeLayer(currentMarker);
+      }
+
+      // Create a new marker at the clicked location
+      marker = await MapHandler.updateOrCreateMarker(map, null, lat, lng);
 
       if (onMapClick) {
         onMapClick(lat, lng);
@@ -133,7 +148,21 @@ class MapHandler {
         const { latitude, longitude } = position.coords;
         map.setView([latitude, longitude], 13);
 
-        const updatedMarker = await MapHandler.updateOrCreateMarker(map, marker, latitude, longitude);
+        // Get the current marker from the map
+        let currentMarker = null;
+        map.eachLayer(layer => {
+          if (layer instanceof L.Marker) {
+            currentMarker = layer;
+          }
+        });
+
+        // If there's already a marker on the map, remove it
+        if (currentMarker) {
+          map.removeLayer(currentMarker);
+        }
+
+        // Create a new marker at the user's location
+        const updatedMarker = await MapHandler.updateOrCreateMarker(map, null, latitude, longitude);
         updatedMarker.openPopup();
 
         if (onLocationFound) {
@@ -185,7 +214,22 @@ class MapHandler {
         const [lng, lat] = location.center;
 
         map.setView([lat, lng], 13);
-        const updatedMarker = await MapHandler.updateOrCreateMarker(map, marker, lat, lng);
+
+        // Get the current marker from the map
+        let currentMarker = null;
+        map.eachLayer(layer => {
+          if (layer instanceof L.Marker) {
+            currentMarker = layer;
+          }
+        });
+
+        // If there's already a marker on the map, remove it
+        if (currentMarker) {
+          map.removeLayer(currentMarker);
+        }
+
+        // Create a new marker at the searched location
+        const updatedMarker = await MapHandler.updateOrCreateMarker(map, null, lat, lng);
         updatedMarker.openPopup();
 
         if (onLocationFound) {
