@@ -89,11 +89,6 @@ class SettingsView {
                   </div>
                 </div>
               </section>
-
-              <!-- Save Settings Button -->
-              <div class="settings-actions">
-                <button id="save-settings" class="btn btn-primary">Save Settings</button>
-              </div>
             </div>
           </div>
         </div>
@@ -102,20 +97,18 @@ class SettingsView {
   }
 
   showLoading() {
-    const saveButton = document.getElementById('save-settings');
-    if (saveButton) {
-      saveButton.innerHTML = '<span class="btn-loader"></span><span class="btn-text">Saving...</span>';
-      saveButton.classList.add('loading');
-      saveButton.disabled = true;
+    // Show loading indicator for the settings that's being changed
+    const settingsContainer = document.querySelector('.settings-container');
+    if (settingsContainer) {
+      settingsContainer.classList.add('loading');
     }
   }
 
   hideLoading() {
-    const saveButton = document.getElementById('save-settings');
-    if (saveButton) {
-      saveButton.innerHTML = 'Save Settings';
-      saveButton.classList.remove('loading');
-      saveButton.disabled = false;
+    // Hide loading indicator
+    const settingsContainer = document.querySelector('.settings-container');
+    if (settingsContainer) {
+      settingsContainer.classList.remove('loading');
     }
   }
 
@@ -202,17 +195,31 @@ class SettingsView {
    * @param {boolean} isSubscribed
    */
   setupEventListeners(onMapStyleChange, onSaveSettings, onEnableNotifications, onDisableNotifications, isSubscribed) {
+    // Set up map style select
     const mapStyleSelect = document.getElementById('map-style-select');
-    if (mapStyleSelect && onMapStyleChange) {
-      mapStyleSelect.addEventListener('change', (event) => {
+    if (mapStyleSelect && onMapStyleChange && onSaveSettings) {
+      mapStyleSelect.addEventListener('change', async (event) => {
         const selectedStyle = event.target.value;
         onMapStyleChange(selectedStyle);
+        // Auto-save settings when map style changes
+        await onSaveSettings();
       });
     }
 
-    const saveButton = document.getElementById('save-settings');
-    if (saveButton && onSaveSettings) {
-      saveButton.addEventListener('click', async () => {
+    // Set up language select
+    const languageSelect = document.getElementById('language-select');
+    if (languageSelect && onSaveSettings) {
+      languageSelect.addEventListener('change', async () => {
+        // Auto-save settings when language changes
+        await onSaveSettings();
+      });
+    }
+
+    // Set up theme select
+    const themeSelect = document.getElementById('theme-select');
+    if (themeSelect && onSaveSettings) {
+      themeSelect.addEventListener('change', async () => {
+        // Auto-save settings when theme changes
         await onSaveSettings();
       });
     }

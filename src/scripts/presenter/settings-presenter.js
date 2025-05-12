@@ -144,7 +144,15 @@ class SettingsPage {
       if (result.error) {
         this._view.showErrorMessage(result.message);
       } else {
-        this._view.showSuccessMessage(result.message);
+        // Use a toast notification instead of a modal for auto-save
+        Swal.fire({
+          toast: true,
+          position: 'top-end',
+          icon: 'success',
+          title: 'Settings saved',
+          showConfirmButton: false,
+          timer: 1500
+        });
 
         const previousTheme = this._currentSettings.theme;
         this._currentSettings = settings;
