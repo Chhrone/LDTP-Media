@@ -147,7 +147,7 @@ class SettingsPage {
         // Use a toast notification instead of a modal for auto-save
         Swal.fire({
           toast: true,
-          position: 'top-end',
+          position: 'bottom-end',
           icon: 'success',
           title: 'Settings saved',
           showConfirmButton: false,

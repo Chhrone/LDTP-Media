@@ -114,21 +114,23 @@ class SettingsView {
 
   showSuccessMessage(message) {
     Swal.fire({
-      title: 'Success!',
-      text: message,
+      toast: true,
+      position: 'bottom-end',
       icon: 'success',
-      confirmButtonColor: '#D48944',
-      confirmButtonText: 'OK'
+      title: message,
+      showConfirmButton: false,
+      timer: 3000
     });
   }
 
   showErrorMessage(message) {
     Swal.fire({
-      title: 'Error!',
-      text: message,
+      toast: true,
+      position: 'bottom-end',
       icon: 'error',
-      confirmButtonColor: '#D48944',
-      confirmButtonText: 'OK'
+      title: message,
+      showConfirmButton: false,
+      timer: 3000
     });
   }
 
