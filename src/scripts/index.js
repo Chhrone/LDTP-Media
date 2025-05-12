@@ -1,21 +1,23 @@
 
 import '../styles/styles.css';
 import App from './app';
+import { registerSW } from 'virtual:pwa-register';
 
 import './utils/focus-visible-polyfill';
 
-// Register service worker
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js')
-      .then(registration => {
-        console.log('Service Worker registered with scope:', registration.scope);
-      })
-      .catch(error => {
-        console.error('Service Worker registration failed:', error);
-      });
-  });
-}
+// Register service worker with auto-update
+const updateSW = registerSW({
+  onNeedRefresh() {
+    // Show a confirmation dialog to the user
+    if (confirm('New content available. Reload to update?')) {
+      updateSW(true);
+    }
+  },
+  onOfflineReady() {
+    console.log('App is ready for offline use');
+    // You could show a toast notification here
+  },
+});
 
 document.addEventListener('DOMContentLoaded', async () => {
   const app = new App({

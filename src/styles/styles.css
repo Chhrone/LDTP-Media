@@ -25,6 +25,7 @@
 @import url('./pages/create-story-view.css');
 @import url('./pages/detail-story-view.css');
 @import url('./pages/auth.css');
+@import url('./pages/not-found-view.css');
 
 /* Utility styles */
 @import url('./utils/accessibility.css');

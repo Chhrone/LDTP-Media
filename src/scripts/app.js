@@ -88,8 +88,8 @@ class App {
       const page = routes[route];
 
       if (!page) {
-        this._content.innerHTML =
-          '<div class="container"><h2>404 - Page Not Found</h2></div>';
+        // Redirect to the Not Found page
+        window.location.hash = '#/not-found';
         return;
       }
 
