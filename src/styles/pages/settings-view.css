@@ -57,7 +57,7 @@
   padding: 20px;
   border: 1px solid rgba(212, 137, 68, 0.2);
   border-radius: 6px;
-  background-color: rgba(225, 217, 207, 0.653); 
+  background-color: rgba(225, 217, 207, 0.653);
 }
 
 .profile-details {
@@ -161,6 +161,63 @@
   }
 }
 
+/* Notification Settings */
+.notification-settings {
+  padding: 20px;
+  border: 1px solid rgba(212, 137, 68, 0.2);
+  border-radius: 6px;
+  background-color: rgba(225, 217, 207, 0.653);
+}
+
+.notification-description {
+  margin-bottom: 15px;
+  color: var(--dark-brown);
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.notification-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.notification-status {
+  padding: 10px 15px;
+  border-radius: 4px;
+  font-weight: 500;
+  text-align: center;
+}
+
+.notification-status.subscribed {
+  background-color: rgba(76, 175, 80, 0.2);
+  color: #2e7d32;
+}
+
+.notification-status.not-subscribed {
+  background-color: rgba(244, 67, 54, 0.1);
+  color: #c62828;
+}
+
+.notification-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.notification-buttons .btn {
+  flex: 1;
+}
+
+#disable-notifications {
+  background-color: transparent;
+  border: 1px solid var(--orange-accent);
+  color: var(--orange-accent);
+}
+
+#disable-notifications:hover {
+  background-color: rgba(212, 137, 68, 0.1);
+}
+
 /* Responsive Styles */
 @media (max-width: 768px) {
   .settings-actions {
@@ -170,5 +227,9 @@
   .settings-actions .btn {
     width: 100%;
     max-width: 300px;
+  }
+
+  .notification-buttons {
+    flex-direction: column;
   }
 }

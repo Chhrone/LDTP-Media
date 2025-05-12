@@ -18,7 +18,11 @@ const CONFIG = {
     aquarelle: 'winter',
     bright: 'bright-v2',
     dark: 'dataviz-dark'
-  }
+  },
+
+  // Push Notification
+  VAPID_PUBLIC_KEY: 'BCCs2eonMI-6H2ctvFaWg-UYdDv387Vno_bzUzALpB442r2lCnsHmtrx8biyPi_E-1fSGABK_Qs_GlvPoJJqxbk',
+  KEY_NOTIFICATION_SUBSCRIPTION: 'notification-subscription'
 };
 
 export default CONFIG;

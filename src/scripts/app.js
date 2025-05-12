@@ -1,6 +1,7 @@
 import routes from "./routes/routes";
 import { getActiveRoute } from "./routes/url-parser";
 import authPresenter from "./presenter/auth-presenter";
+import notificationPresenter from "./presenter/notification-presenter";
 import NavbarHandler from "./utils/navbar-handler";
 import BackToTopHandler from "./utils/back-to-top-handler";
 import FabVisibilityHandler from "./utils/fab-visibility-handler";
@@ -22,6 +23,25 @@ class App {
 
     this._initHandlers();
     this._initLogoutFunctionality();
+    this._initNotifications();
+  }
+
+  /**
+   * Initialize push notifications
+   */
+  async _initNotifications() {
+    try {
+      // Initialize notification system
+      await notificationPresenter.init();
+
+      // If user is logged in, check subscription status
+      if (authPresenter.isLoggedIn()) {
+        const isSubscribed = await notificationPresenter.isSubscribed();
+        console.log('Notification subscription status:', isSubscribed ? 'Subscribed' : 'Not subscribed');
+      }
+    } catch (error) {
+      console.error('Error initializing notifications:', error);
+    }
   }
 
   _initHandlers() {

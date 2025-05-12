@@ -2,6 +2,7 @@ import LoginView from '../views/login-view';
 import AuthHelper from '../utils/auth-helper';
 import { sleep, shuffleArray } from '../utils/index';
 import authPresenter from './auth-presenter';
+import notificationPresenter from './notification-presenter';
 
 class LoginPage {
   constructor() {
@@ -52,6 +53,13 @@ class LoginPage {
 
         const userData = AuthHelper.getUserData();
         this._view.updateNavigationUI(userData);
+
+        // Ask for notification permission after successful login
+        try {
+          await notificationPresenter.requestPermissionAndSubscribe();
+        } catch (notificationError) {
+          console.error('Notification subscription error:', notificationError);
+        }
 
         this._view.navigateTo('#/', true);
       } catch (error) {

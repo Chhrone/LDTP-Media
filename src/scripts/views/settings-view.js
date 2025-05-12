@@ -69,6 +69,27 @@ class SettingsView {
                 </div>
               </section>
 
+              <div class="settings-divider"></div>
+
+              <!-- Notification Settings Section -->
+              <section class="settings-section">
+                <h2 class="settings-section-title">Push Notifications</h2>
+                <div class="notification-settings">
+                  <p class="notification-description">
+                    Receive notifications when new stories are created.
+                  </p>
+                  <div class="notification-controls">
+                    <div id="notification-status" class="notification-status">
+                      Checking notification status...
+                    </div>
+                    <div class="notification-buttons">
+                      <button id="enable-notifications" class="btn btn-secondary">Enable Notifications</button>
+                      <button id="disable-notifications" class="btn btn-outline">Disable Notifications</button>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
               <!-- Save Settings Button -->
               <div class="settings-actions">
                 <button id="save-settings" class="btn btn-primary">Save Settings</button>
@@ -153,7 +174,7 @@ class SettingsView {
 
   /**
    * Initializes form with current settings values
-   * @param {Object} currentSettings 
+   * @param {Object} currentSettings
    */
   initializeForm(currentSettings) {
     const languageSelect = document.getElementById('language-select');
@@ -174,10 +195,13 @@ class SettingsView {
 
   /**
    * Sets up event listeners for settings form elements
-   * @param {Function} onMapStyleChange 
-   * @param {Function} onSaveSettings 
+   * @param {Function} onMapStyleChange
+   * @param {Function} onSaveSettings
+   * @param {Function} onEnableNotifications
+   * @param {Function} onDisableNotifications
+   * @param {boolean} isSubscribed
    */
-  setupEventListeners(onMapStyleChange, onSaveSettings) {
+  setupEventListeners(onMapStyleChange, onSaveSettings, onEnableNotifications, onDisableNotifications, isSubscribed) {
     const mapStyleSelect = document.getElementById('map-style-select');
     if (mapStyleSelect && onMapStyleChange) {
       mapStyleSelect.addEventListener('change', (event) => {
@@ -192,12 +216,59 @@ class SettingsView {
         await onSaveSettings();
       });
     }
+
+    // Set up notification buttons
+    const enableButton = document.getElementById('enable-notifications');
+    const disableButton = document.getElementById('disable-notifications');
+
+    if (enableButton && onEnableNotifications) {
+      enableButton.addEventListener('click', async () => {
+        await onEnableNotifications();
+      });
+    }
+
+    if (disableButton && onDisableNotifications) {
+      disableButton.addEventListener('click', async () => {
+        await onDisableNotifications();
+      });
+    }
+
+    // Update notification UI based on subscription status
+    this.updateNotificationUI(isSubscribed);
+  }
+
+  /**
+   * Updates the notification UI based on subscription status
+   * @param {boolean} isSubscribed
+   */
+  updateNotificationUI(isSubscribed) {
+    const statusElement = document.getElementById('notification-status');
+    const enableButton = document.getElementById('enable-notifications');
+    const disableButton = document.getElementById('disable-notifications');
+
+    if (!statusElement || !enableButton || !disableButton) return;
+
+    if (isSubscribed) {
+      statusElement.textContent = 'Notifications are enabled';
+      statusElement.classList.add('subscribed');
+      statusElement.classList.remove('not-subscribed');
+
+      enableButton.style.display = 'none';
+      disableButton.style.display = 'block';
+    } else {
+      statusElement.textContent = 'Notifications are disabled';
+      statusElement.classList.add('not-subscribed');
+      statusElement.classList.remove('subscribed');
+
+      enableButton.style.display = 'block';
+      disableButton.style.display = 'none';
+    }
   }
 
   /**
    * Gets current settings values from form inputs
-   * @param {Object} currentSettings 
-   * @returns {Object} 
+   * @param {Object} currentSettings
+   * @returns {Object}
    */
   getFormValues(currentSettings) {
     const languageSelect = document.getElementById('language-select');

@@ -2,6 +2,7 @@ import RegisterView from '../views/register-view';
 import AuthHelper from '../utils/auth-helper';
 import { sleep, shuffleArray } from '../utils/index';
 import authPresenter from './auth-presenter';
+import notificationPresenter from './notification-presenter';
 
 class RegisterPage {
   constructor() {
@@ -59,6 +60,14 @@ class RegisterPage {
 
         const userData = AuthHelper.getUserData();
         this._view.updateNavigationUI(userData);
+
+        // Ask for notification permission after successful registration
+        try {
+          await notificationPresenter.requestPermissionAndSubscribe();
+        } catch (notificationError) {
+          console.error('Notification subscription error:', notificationError);
+          // Continue with registration flow even if notification subscription fails
+        }
 
         this._view.navigateTo('#/', true);
       } catch (error) {
