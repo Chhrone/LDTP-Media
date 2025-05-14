@@ -47,7 +47,7 @@ class ArchivePage {
       const success = await this._model.deleteStory(storyId);
 
       if (success) {
-        Swal.fire({
+        Swal.customFire({
           title: 'Removed',
           text: 'Story removed from your archive',
           icon: 'success',
@@ -65,7 +65,7 @@ class ArchivePage {
       }
     } catch (error) {
       console.error('Error unsaving story:', error);
-      Swal.fire({
+      Swal.customFire({
         title: 'Error',
         text: 'Failed to remove story. Please try again.',
         icon: 'error',

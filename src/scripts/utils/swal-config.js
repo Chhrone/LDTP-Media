@@ -17,21 +17,21 @@ const SwalConfig = Swal.mixin({
   }
 });
 
-// Override the default Swal.fire method to use our custom configuration for toasts
-const originalFire = Swal.fire;
-Swal.fire = function(options) {
+// Create a custom method that safely applies our configuration
+Swal.customFire = function(options) {
   // If it's a toast notification, use our custom config
   if (options.toast === true) {
     return SwalConfig.fire(options);
   }
-  
-  // For confirmation dialogs and other non-toast alerts, use the original method
-  // but still position them at the top-right if not specified
-  if (!options.position) {
-    options.position = 'top-end';
+
+  // For confirmation dialogs and other non-toast alerts
+  // Position them at the top-right if not specified
+  const updatedOptions = { ...options };
+  if (!updatedOptions.position) {
+    updatedOptions.position = 'top-end';
   }
-  
-  return originalFire.call(this, options);
+
+  return Swal.fire(updatedOptions);
 };
 
 export default Swal;

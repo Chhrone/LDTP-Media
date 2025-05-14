@@ -2,17 +2,17 @@
 
 /* Ensure SweetAlert container has higher z-index than header */
 .swal2-container {
-  z-index: 10001 !important; /* Higher than header's 9999 */
+  z-index: 100 !important; /* Higher than header's 20 */
 }
 
 /* Ensure toast notifications appear above header */
 .swal2-container.swal2-top-end {
-  z-index: 10001 !important;
+  z-index: 100 !important;
 }
 
 /* Ensure the backdrop is also above the header */
 .swal2-backdrop-show {
-  z-index: 10000 !important;
+  z-index: 100 !important;
 }
 
 /* Force all SweetAlert toasts to appear at the top-right corner */

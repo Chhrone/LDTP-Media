@@ -7,7 +7,7 @@
 
 /* Ensure header always stays on top during transitions */
 ::view-transition-group(site-header) {
-  z-index: 9999 !important;
+  z-index: 20 !important;
 }
 
 ::view-transition-old(site-header),
@@ -20,7 +20,7 @@
 
 /* Ensure navigation drawer always stays on top during transitions */
 ::view-transition-group(site-nav) {
-  z-index: 9999 !important;
+  z-index: 20 !important;
 }
 
 ::view-transition-old(site-nav),

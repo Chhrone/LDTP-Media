@@ -107,7 +107,7 @@ class DetailStoryPage {
         const success = await IndexedDBHelper.deleteStory(storyId);
 
         if (success) {
-          Swal.fire({
+          Swal.customFire({
             title: 'Removed',
             text: 'Story removed from your archive',
             icon: 'success',
@@ -126,7 +126,7 @@ class DetailStoryPage {
         const success = await IndexedDBHelper.saveStory(storyData);
 
         if (success) {
-          Swal.fire({
+          Swal.customFire({
             title: 'Saved!',
             text: 'Story saved to your archive',
             icon: 'success',
@@ -142,7 +142,7 @@ class DetailStoryPage {
       }
     } catch (error) {
       console.error('Error saving/unsaving story:', error);
-      Swal.fire({
+      Swal.customFire({
         title: 'Error',
         text: 'Failed to update story. Please try again.',
         icon: 'error',

@@ -1,3 +1,5 @@
+import Swal from '../utils/swal-config';
+
 class AboutView {
   constructor() {
     this._initColorPalette = this._initColorPalette.bind(this);
@@ -181,7 +183,7 @@ class AboutView {
           element.classList.remove('copied');
         }, 2000);
 
-        Swal.fire({
+        Swal.customFire({
           title: 'Color Copied!',
           text: `${text} has been copied to clipboard`,
           icon: 'success',
@@ -195,7 +197,7 @@ class AboutView {
       .catch(err => {
         console.error('Could not copy text: ', err);
 
-        Swal.fire({
+        Swal.customFire({
           title: 'Copy Failed',
           text: 'Could not copy to clipboard',
           icon: 'error',

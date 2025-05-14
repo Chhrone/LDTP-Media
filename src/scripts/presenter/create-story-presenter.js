@@ -2,7 +2,7 @@ import CreateStoryView from '../views/create-story-view';
 import CreateStoryModel from '../models/create-story-model';
 import AuthHelper from '../utils/auth-helper';
 import CONFIG from '../config';
-import Swal from 'sweetalert2';
+import Swal from '../utils/swal-config';
 
 class CreateStoryPage {
   constructor() {
@@ -88,7 +88,7 @@ class CreateStoryPage {
     try {
       const photoFile = formData.get('photo');
       if (photoFile && photoFile instanceof File && photoFile.size > 900 * 1024) {
-        Swal.fire({
+        Swal.customFire({
           title: 'Processing Image',
           text: 'Your image is being compressed to meet size requirements...',
           allowOutsideClick: false,
@@ -97,7 +97,7 @@ class CreateStoryPage {
           }
         });
       } else {
-        Swal.fire({
+        Swal.customFire({
           title: 'Uploading Story',
           text: 'Please wait...',
           allowOutsideClick: false,
@@ -109,7 +109,7 @@ class CreateStoryPage {
 
       await this._model.createStory(formData);
 
-      Swal.fire({
+      Swal.customFire({
         title: 'Success!',
         text: 'Your story has been uploaded successfully.',
         icon: 'success',
@@ -121,14 +121,14 @@ class CreateStoryPage {
       console.error('Error creating story:', error);
 
       if (error.message && error.message.includes('Payload content length greater than maximum allowed')) {
-        Swal.fire({
+        Swal.customFire({
           title: 'Image Too Large',
           text: 'Your image exceeds the maximum allowed size (1MB). Please try again with a smaller image or use the built-in camera which automatically compresses images.',
           icon: 'error',
           confirmButtonText: 'OK'
         });
       } else {
-        Swal.fire({
+        Swal.customFire({
           title: 'Error',
           text: error.message || 'Failed to upload story. Please try again.',
           icon: 'error',

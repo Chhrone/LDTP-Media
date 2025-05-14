@@ -1,3 +1,5 @@
+import Swal from '../utils/swal-config';
+
 class SettingsView {
   getTemplate() {
     return `
@@ -113,7 +115,7 @@ class SettingsView {
   }
 
   showSuccessMessage(message) {
-    Swal.fire({
+    Swal.customFire({
       toast: true,
       position: 'bottom-end',
       icon: 'success',
@@ -124,7 +126,7 @@ class SettingsView {
   }
 
   showErrorMessage(message) {
-    Swal.fire({
+    Swal.customFire({
       toast: true,
       position: 'bottom-end',
       icon: 'error',

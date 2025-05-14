@@ -3,6 +3,7 @@ import SettingsModel from '../models/settings-model';
 import AuthHelper from '../utils/auth-helper';
 import CONFIG from '../config';
 import notificationPresenter from './notification-presenter';
+import Swal from '../utils/swal-config';
 
 class SettingsPage {
   constructor() {
@@ -145,7 +146,7 @@ class SettingsPage {
         this._view.showErrorMessage(result.message);
       } else {
         // Use a toast notification instead of a modal for auto-save
-        Swal.fire({
+        Swal.customFire({
           toast: true,
           position: 'bottom-end',
           icon: 'success',
