@@ -66,12 +66,24 @@ class RegisterView {
     const errorContainer = document.getElementById('error-container');
     errorContainer.textContent = message;
     errorContainer.style.display = 'block';
+    errorContainer.classList.add('error');
+    errorContainer.classList.remove('info');
+  }
+
+  showInfo(message) {
+    const errorContainer = document.getElementById('error-container');
+    errorContainer.textContent = message;
+    errorContainer.style.display = 'block';
+    errorContainer.classList.add('info');
+    errorContainer.classList.remove('error');
   }
 
   clearError() {
     const errorContainer = document.getElementById('error-container');
     errorContainer.textContent = '';
     errorContainer.style.display = 'none';
+    errorContainer.classList.remove('error');
+    errorContainer.classList.remove('info');
   }
 
   showLoading() {
@@ -136,7 +148,7 @@ class RegisterView {
 
   /**
    * Initializes the register form with a submit handler
-   * @param {Function} onSubmit 
+   * @param {Function} onSubmit
    */
   initializeRegisterForm(onSubmit) {
     const registerForm = document.getElementById('register-form');
@@ -160,7 +172,7 @@ class RegisterView {
 
   /**
    * Updates the navigation UI after successful registration
-   * @param {Object} userData 
+   * @param {Object} userData
    */
   updateNavigationUI(userData) {
     const navList = document.getElementById('nav-list');
@@ -187,8 +199,8 @@ class RegisterView {
 
   /**
    * Navigates to a new page with view transitions if available
-   * @param {string} path 
-   * @param {boolean} reload 
+   * @param {string} path
+   * @param {boolean} reload
    */
   navigateTo(path, reload = false) {
     if (document.startViewTransition) {

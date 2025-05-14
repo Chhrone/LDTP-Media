@@ -37,6 +37,11 @@ class FabVisibilityHandler {
     return route === '/about';
   }
 
+  _isArchivePage() {
+    const route = getActiveRoute();
+    return route === '/archive';
+  }
+
   /**
    * Manages visibility of UI elements based on current page
    * Shows/hides header buttons, navigation links, and FAB button
@@ -62,7 +67,7 @@ class FabVisibilityHandler {
       }
 
       if (this._createStoryFab) {
-        const shouldHideFab = this._isCreateStoryPage() || this._isSettingsPage() || this._isAboutPage();
+        const shouldHideFab = this._isCreateStoryPage() || this._isSettingsPage() || this._isAboutPage() || this._isArchivePage();
         this._createStoryFab.style.display = shouldHideFab ? 'none' : 'flex';
       }
     }
@@ -78,8 +83,9 @@ class FabVisibilityHandler {
     const isCreateStoryPage = route === '/create-story';
     const isSettingsPage = route === '/settings';
     const isAboutPage = route === '/about';
+    const isArchivePage = route === '/archive';
 
-    const shouldHideFab = isAuthPage || isCreateStoryPage || isSettingsPage || isAboutPage;
+    const shouldHideFab = isAuthPage || isCreateStoryPage || isSettingsPage || isAboutPage || isArchivePage;
     this._createStoryFab.style.display = shouldHideFab ? 'none' : 'flex';
   }
 }

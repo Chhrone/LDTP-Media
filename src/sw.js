@@ -1,75 +1,141 @@
-const CACHE_NAME = 'ldtp-media-v1';
-const urlsToCache = [
-  '/',
-  '/index.html',
-  '/scripts/index.js',
-  '/scripts/app.js',
-  '/styles/styles.css',
-  '/icon.png'
-];
+importScripts('https://storage.googleapis.com/workbox-cdn/releases/7.0.0/workbox-sw.js');
 
-self.addEventListener('install', (event) => {
-  self.skipWaiting();
+// Check if Workbox loaded successfully
+if (workbox) {
+  console.log('Workbox is loaded');
 
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then((cache) => {
-        return cache.addAll(urlsToCache)
-          .catch(error => {
-            console.error('Failed to cache assets:', error);
-            return Promise.resolve();
-          });
-      })
-      .catch(error => {
-        console.error('Cache open failed:', error);
-      })
-  );
-});
+  // Force development builds
+  workbox.setConfig({ debug: false });
 
-self.addEventListener('activate', (event) => {
-  event.waitUntil(clients.claim());
+  // Precaching
+  workbox.precaching.precacheAndRoute([
+    { url: '/', revision: '1' },
+    { url: '/index.html', revision: '1' },
+    { url: '/manifest.json', revision: '1' },
+    { url: '/icon.png', revision: '1' },
+    { url: '/icons/icon-72x72.png', revision: '1' },
+    { url: '/icons/icon-96x96.png', revision: '1' },
+    { url: '/icons/icon-128x128.png', revision: '1' },
+    { url: '/icons/icon-144x144.png', revision: '1' },
+    { url: '/icons/icon-152x152.png', revision: '1' },
+    { url: '/icons/icon-192x192.png', revision: '1' },
+    { url: '/icons/icon-384x384.png', revision: '1' },
+    { url: '/icons/icon-512x512.png', revision: '1' },
+    { url: '/icons/maskable-icon.png', revision: '1' },
+    { url: '/icons/shortcut-new-story-96x96.png', revision: '1' }
+  ]);
 
-  const cacheWhitelist = [CACHE_NAME];
-  event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cacheName) => {
-          if (cacheWhitelist.indexOf(cacheName) === -1) {
-            return caches.delete(cacheName);
-          }
-          return Promise.resolve();
-        })
-      );
-    }).catch(error => {
-      console.error('Cache cleanup failed:', error);
+  // Cache CSS, JS, and Web Worker files with a Cache First strategy
+  workbox.routing.registerRoute(
+    ({ request }) => request.destination === 'style' ||
+                     request.destination === 'script' ||
+                     request.destination === 'worker',
+    new workbox.strategies.CacheFirst({
+      cacheName: 'assets-cache',
+      plugins: [
+        new workbox.expiration.ExpirationPlugin({
+          maxEntries: 60,
+          maxAgeSeconds: 30 * 24 * 60 * 60, // 30 days
+        }),
+      ],
     })
   );
-});
 
-self.addEventListener('fetch', (event) => {
-  event.respondWith(
-    caches.match(event.request)
-      .then((response) => {
-        if (response) {
-          return response;
-        }
-
-        const fetchRequest = event.request.clone();
-
-        return fetch(fetchRequest).catch(error => {
-          if (event.request.mode === 'navigate') {
-            return caches.match('/index.html');
-          }
-          throw error;
-        });
-      }).catch(error => {
-        if (event.request.mode === 'navigate') {
-          return caches.match('/index.html');
-        }
-        throw error;
-      })
+  // Cache images with a Cache First strategy
+  workbox.routing.registerRoute(
+    ({ request }) => request.destination === 'image',
+    new workbox.strategies.CacheFirst({
+      cacheName: 'images-cache',
+      plugins: [
+        new workbox.expiration.ExpirationPlugin({
+          maxEntries: 60,
+          maxAgeSeconds: 30 * 24 * 60 * 60, // 30 days
+        }),
+      ],
+    })
   );
-});
+
+  // Cache fonts with a Cache First strategy
+  workbox.routing.registerRoute(
+    ({ request }) => request.destination === 'font',
+    new workbox.strategies.CacheFirst({
+      cacheName: 'fonts-cache',
+      plugins: [
+        new workbox.expiration.ExpirationPlugin({
+          maxEntries: 30,
+          maxAgeSeconds: 60 * 24 * 60 * 60, // 60 days
+        }),
+      ],
+    })
+  );
+
+  // Cache API requests with a Network First strategy
+  workbox.routing.registerRoute(
+    ({ url }) => url.origin === 'https://story-api.dicoding.dev',
+    new workbox.strategies.NetworkFirst({
+      cacheName: 'api-cache',
+      plugins: [
+        new workbox.expiration.ExpirationPlugin({
+          maxEntries: 50,
+          maxAgeSeconds: 5 * 60, // 5 minutes
+        }),
+      ],
+    })
+  );
+
+  // Cache MapTiler API requests with a Network First strategy
+  workbox.routing.registerRoute(
+    ({ url }) => url.origin.includes('maptiler.com'),
+    new workbox.strategies.NetworkFirst({
+      cacheName: 'maptiler-cache',
+      plugins: [
+        new workbox.expiration.ExpirationPlugin({
+          maxEntries: 100,
+          maxAgeSeconds: 24 * 60 * 60, // 1 day
+        }),
+      ],
+    })
+  );
+
+  // Cache CDN resources with a Stale While Revalidate strategy
+  workbox.routing.registerRoute(
+    ({ url }) =>
+      url.origin.includes('cdnjs.cloudflare.com') ||
+      url.origin.includes('unpkg.com') ||
+      url.origin.includes('cdn.jsdelivr.net'),
+    new workbox.strategies.StaleWhileRevalidate({
+      cacheName: 'cdn-cache',
+      plugins: [
+        new workbox.expiration.ExpirationPlugin({
+          maxEntries: 30,
+          maxAgeSeconds: 14 * 24 * 60 * 60, // 14 days
+        }),
+      ],
+    })
+  );
+
+  // Fallback to app shell for navigation requests
+  workbox.routing.registerRoute(
+    ({ request }) => request.mode === 'navigate',
+    async () => {
+      try {
+        return await workbox.strategies.NetworkFirst({
+          cacheName: 'pages-cache',
+          plugins: [
+            new workbox.expiration.ExpirationPlugin({
+              maxEntries: 30,
+              maxAgeSeconds: 7 * 24 * 60 * 60, // 7 days
+            }),
+          ],
+        }).handle({ request: new Request('/index.html') });
+      } catch (error) {
+        return caches.match('/index.html');
+      }
+    }
+  );
+} else {
+  console.error('Workbox could not be loaded. Offline functionality will be limited.');
+}
 
 self.addEventListener('push', (event) => {
   let notificationData = {};

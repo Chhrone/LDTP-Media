@@ -7,6 +7,7 @@ import LoginPage from '../presenter/login-presenter';
 import RegisterPage from '../presenter/register-presenter';
 import GuestStoryPage from '../presenter/guest-story-presenter';
 import NotFoundPage from '../presenter/not-found-presenter';
+import ArchivePage from '../presenter/archive-presenter';
 
 const routes = {
   '/': new HomePage(),
@@ -19,6 +20,7 @@ const routes = {
   '/login': new LoginPage(),
   '/register': new RegisterPage(),
   '/not-found': new NotFoundPage(),
+  '/archive': new ArchivePage(),
 };
 
 export default routes;

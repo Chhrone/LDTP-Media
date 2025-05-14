@@ -32,14 +32,19 @@ class RegisterPage {
   }
 
   async render() {
-    if (AuthHelper.redirectIfLoggedIn()) {
-      return '';
-    }
-
+    // Always render the register form, even if the user is logged in
     return this._view.getTemplate();
   }
 
   async afterRender() {
+    // Check if user is already logged in
+    if (AuthHelper.isLoggedIn()) {
+      const userData = AuthHelper.getUserData();
+      if (userData) {
+        this._view.showInfo(`You are already logged in as ${userData.name}. You can continue to the home page or log out first.`);
+      }
+    }
+
     this._view.initializeGuestPostButton(() => {
       this._view.navigateTo('#/guest-story');
     });

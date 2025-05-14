@@ -114,7 +114,8 @@
   padding: 20px 30px;
   border-top: 1px solid rgba(0, 0, 0, 0.1);
   display: flex;
-  justify-content: flex-start;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .btn-back {
@@ -129,6 +130,34 @@
 .btn-back:hover {
   background-color: var(--medium-brown);
   transform: translateX(-5px);
+}
+
+.btn-save {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background-color: var(--orange-accent);
+  color: var(--text-light);
+  transition: all 0.3s ease;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.btn-save:hover {
+  background-color: var(--light-orange);
+  transform: translateY(-2px);
+}
+
+.btn-save.saved {
+  background-color: var(--medium-brown);
+  cursor: default;
+}
+
+.btn-save.saved:hover {
+  transform: none;
 }
 
 /* Loading styles */

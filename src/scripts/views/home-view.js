@@ -52,6 +52,9 @@ class HomeView {
                     </div>
                     <div class="right-info">
                       <div class="story-actions">
+                        <button class="btn-icon save-story-btn" data-story-id="${story.id}" title="Save story">
+                          <i class="fas fa-bookmark"></i>
+                        </button>
                         <a href="#/story/${story.id}" class="story-action-link" data-story-id="${story.id}">Read More</a>
                       </div>
                     </div>
@@ -151,11 +154,11 @@ class HomeView {
 
   /**
    * Initializes the map with story markers
-   * @param {Object} options 
-   * @param {Array} options.stories 
-   * @param {string} options.currentMapStyle 
-   * @param {Object} options.mapStyles 
-   * @param {Object} options.config 
+   * @param {Object} options
+   * @param {Array} options.stories
+   * @param {string} options.currentMapStyle
+   * @param {Object} options.mapStyles
+   * @param {Object} options.config
    * @returns {Object} Map and markers objects
    */
   async initializeMap(options) {
@@ -198,7 +201,7 @@ class HomeView {
 
   /**
    * Adds zoom info message to the map container
-   * @param {HTMLElement} mapContainer 
+   * @param {HTMLElement} mapContainer
    */
   _addZoomInfoMessage(mapContainer) {
     const zoomInfoElement = document.createElement('div');
@@ -218,7 +221,7 @@ class HomeView {
 
   /**
    * Initializes map style control buttons
-   * @param {Function} onStyleChange 
+   * @param {Function} onStyleChange
    */
   initializeMapStyleControls(onStyleChange) {
     const styleButtons = document.querySelectorAll('.map-style-button');
@@ -300,6 +303,53 @@ class HomeView {
    */
   initializeHeroCTAEvents() {
     NavigationUtilities.setupSmoothScrolling('.hero-btn-secondary', '#map-section');
+  }
+
+  /**
+   * Initializes save story buttons
+   * @param {Function} onSaveStory - Callback for save story button click
+   */
+  initializeSaveStoryButtons(onSaveStory) {
+    const saveButtons = document.querySelectorAll('.save-story-btn');
+    saveButtons.forEach(button => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        const storyId = button.dataset.storyId;
+
+        // Get current state and toggle it immediately for instant feedback
+        const currentlySaved = button.classList.contains('saved');
+        this.updateSaveButtonState(storyId, !currentlySaved);
+
+        if (onSaveStory) {
+          // Call the save/unsave function and update again with the actual result
+          const isSaved = await onSaveStory(storyId);
+          // Only update if the result is different from what we expected
+          if (isSaved !== !currentlySaved) {
+            this.updateSaveButtonState(storyId, isSaved);
+          }
+        }
+      });
+    });
+  }
+
+  /**
+   * Updates save button state based on whether the story is already saved
+   * @param {string} storyId - The ID of the story
+   * @param {boolean} isSaved - Whether the story is saved
+   */
+  updateSaveButtonState(storyId, isSaved) {
+    const saveButton = document.querySelector(`.save-story-btn[data-story-id="${storyId}"]`);
+    if (saveButton) {
+      if (isSaved) {
+        saveButton.classList.add('saved');
+        saveButton.title = 'Remove from archive';
+        saveButton.querySelector('i').classList.add('saved');
+      } else {
+        saveButton.classList.remove('saved');
+        saveButton.title = 'Save to archive';
+        saveButton.querySelector('i').classList.remove('saved');
+      }
+    }
   }
 }
 

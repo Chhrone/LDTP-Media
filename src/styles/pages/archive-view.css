@@ -1,0 +1,95 @@
+/* Archive Page Styles */
+@import url('../base/colors.css');
+@import url('../components/story-card.css');
+
+.archive-page {
+  padding: 40px 0;
+}
+
+.archive-page .page-title {
+  font-size: 2.5rem;
+  color: var(--dark-brown);
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.archive-content {
+  min-height: 400px;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 60px 20px;
+  background-color: var(--cream-light);
+  border-radius: 8px;
+  margin: 20px 0;
+}
+
+.empty-state .empty-icon {
+  font-size: 4rem;
+  color: var(--medium-brown);
+  margin-bottom: 20px;
+}
+
+.empty-state h2 {
+  font-size: 1.8rem;
+  color: var(--dark-brown);
+  margin-bottom: 15px;
+}
+
+.empty-state p {
+  font-size: 1.1rem;
+  color: var(--medium-brown);
+  max-width: 500px;
+  margin: 0 auto 25px;
+  line-height: 1.5;
+}
+
+.empty-state .btn {
+  padding: 10px 20px;
+  background-color: var(--orange-accent);
+  color: white;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+.empty-state .btn:hover {
+  background-color: var(--orange-dark);
+}
+
+.delete-story-btn {
+  color: var(--red);
+}
+
+.delete-story-btn:hover {
+  color: var(--red-dark);
+}
+
+/* Responsive styles */
+@media screen and (max-width: 768px) {
+  .archive-page .page-title {
+    font-size: 2rem;
+  }
+  
+  .empty-state {
+    padding: 40px 15px;
+  }
+  
+  .empty-state .empty-icon {
+    font-size: 3rem;
+  }
+  
+  .empty-state h2 {
+    font-size: 1.5rem;
+  }
+  
+  .empty-state p {
+    font-size: 1rem;
+  }
+}

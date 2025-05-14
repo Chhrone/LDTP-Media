@@ -2,10 +2,11 @@
   "name": "Loughshinny Dublinn Travel Post",
   "short_name": "LDTP Media",
   "description": "Share your travel stories with the world",
-  "start_url": "/",
+  "start_url": "/index.html",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#D48944",
+  "theme_color": "#3498db",
+  "orientation": "any",
   "icons": [
     {
       "src": "/icons/icon-72x72.png",

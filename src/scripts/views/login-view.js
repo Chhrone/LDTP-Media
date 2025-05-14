@@ -1,6 +1,6 @@
 class LoginView {
   getTemplate() {
-    return `
+    const template = `
       <div class="container auth-container">
         <div class="auth-card" style="view-transition-name: login-card">
           <h1 class="auth-title">Login to Loughshinny Dublinn Travel Post</h1>
@@ -48,18 +48,38 @@ class LoginView {
         </div>
       </div>
     `;
+    console.log('LoginView template generated:', template); // Debug log
+    return template;
   }
 
   showError(message) {
     const errorContainer = document.getElementById('error-container');
-    errorContainer.textContent = message;
-    errorContainer.style.display = 'block';
+    if (errorContainer) {
+      errorContainer.textContent = message;
+      errorContainer.style.display = 'block';
+      errorContainer.classList.add('error');
+      errorContainer.classList.remove('info');
+    }
+  }
+
+  showInfo(message) {
+    const errorContainer = document.getElementById('error-container');
+    if (errorContainer) {
+      errorContainer.textContent = message;
+      errorContainer.style.display = 'block';
+      errorContainer.classList.add('info');
+      errorContainer.classList.remove('error');
+    }
   }
 
   clearError() {
     const errorContainer = document.getElementById('error-container');
-    errorContainer.textContent = '';
-    errorContainer.style.display = 'none';
+    if (errorContainer) {
+      errorContainer.textContent = '';
+      errorContainer.style.display = 'none';
+      errorContainer.classList.remove('error');
+      errorContainer.classList.remove('info');
+    }
   }
 
   showLoading() {
@@ -104,30 +124,14 @@ class LoginView {
 
   updateLoadingText(text) {
     const loadingText = document.getElementById('loading-text');
-
     if (loadingText) {
       loadingText.textContent = text;
     }
   }
 
-  /**
-   * Initializes the guest post button with a click handler
-   * @param {Function} onGuestPostClick
-   */
-  initializeGuestPostButton(onGuestPostClick) {
-    const guestPostButton = document.getElementById('guest-post-button');
-
-    if (guestPostButton && onGuestPostClick) {
-      guestPostButton.addEventListener('click', onGuestPostClick);
-    }
-  }
-
-  /**
-   * Initializes the login form with a submit handler
-   * @param {Function} onSubmit 
-   */
   initializeLoginForm(onSubmit) {
     const loginForm = document.getElementById('login-form');
+    console.log('Login form element:', loginForm); // Debug log
 
     if (loginForm && onSubmit) {
       loginForm.addEventListener('submit', (event) => {
@@ -145,10 +149,13 @@ class LoginView {
     }
   }
 
-  /**
-   * Updates the navigation UI after successful login
-   * @param {Object} userData 
-   */
+  initializeGuestPostButton(onClick) {
+    const guestPostButton = document.getElementById('guest-post-button');
+    if (guestPostButton && onClick) {
+      guestPostButton.addEventListener('click', onClick);
+    }
+  }
+
   updateNavigationUI(userData) {
     const navList = document.getElementById('nav-list');
     const userButton = document.getElementById('user-button');
@@ -172,21 +179,11 @@ class LoginView {
     }
   }
 
-  /**
-   * Navigates to a new page with view transitions if available
-   * @param {string} path
-   * @param {boolean} reload
-   */
-  navigateTo(path, reload = false) {
-    if (document.startViewTransition) {
-      document.startViewTransition(() => {
-        window.location.hash = path;
-      });
+  navigateTo(path, replace = false) {
+    if (replace) {
+      window.location.replace(`#${path}`);
     } else {
       window.location.hash = path;
-      if (reload) {
-        window.location.reload();
-      }
     }
   }
 }

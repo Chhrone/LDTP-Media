@@ -2,7 +2,7 @@
 
 /* Page Transitions */
 
-/* Apply transitions for settings and about pages */
+/* Apply transitions for settings, about, and archive pages */
 @media (prefers-reduced-motion: no-preference) {
   /* Settings page transitions - when going to settings */
   ::view-transition-old(home-return) {
@@ -22,6 +22,15 @@
     animation: 300ms cubic-bezier(0.4, 0, 0.2, 1) both slide-in-right;
   }
 
+  /* Archive page transitions - when going to archive */
+  ::view-transition-old(home-return) {
+    animation: 300ms cubic-bezier(0.4, 0, 0.2, 1) both slide-out-left;
+  }
+
+  ::view-transition-new(archive-page) {
+    animation: 300ms cubic-bezier(0.4, 0, 0.2, 1) both slide-in-right;
+  }
+
   /* Transitions when returning from settings to home */
   ::view-transition-old(settings-page) {
     animation: 300ms cubic-bezier(0.4, 0, 0.2, 1) both slide-out-right;
@@ -32,14 +41,20 @@
     animation: 300ms cubic-bezier(0.4, 0, 0.2, 1) both slide-out-right;
   }
 
-  /* Home page transitions - when returning from settings/about */
+  /* Transitions when returning from archive to home */
+  ::view-transition-old(archive-page) {
+    animation: 300ms cubic-bezier(0.4, 0, 0.2, 1) both slide-out-right;
+  }
+
+  /* Home page transitions - when returning from settings/about/archive */
   ::view-transition-new(home-return) {
     animation: 300ms cubic-bezier(0.4, 0, 0.2, 1) both slide-in-left;
   }
 
   /* Only apply slide-in animation when NOT coming from a detail page */
   .from-settings ::view-transition-new(home-content),
-  .from-about ::view-transition-new(home-content) {
+  .from-about ::view-transition-new(home-content),
+  .from-archive ::view-transition-new(home-content) {
     animation: 300ms cubic-bezier(0.4, 0, 0.2, 1) both slide-in-left;
   }
 }

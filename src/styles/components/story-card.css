@@ -154,6 +154,7 @@
 .story-actions {
   display: flex;
   gap: 10px;
+  align-items: center;
 }
 
 .story-action-link {
@@ -168,6 +169,45 @@
 
 .story-action-link:hover {
   color: var(--light-orange);
+}
+
+.btn-icon {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--medium-brown);
+  font-size: 1rem;
+  padding: 5px;
+  transition: color 0.2s ease, transform 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-icon:hover {
+  color: var(--orange-accent);
+  transform: scale(1.1);
+}
+
+.save-story-btn {
+  color: var(--medium-brown);
+}
+
+.save-story-btn:hover {
+  color: var(--orange-accent);
+}
+
+.save-story-btn.saved,
+.save-story-btn .fa-bookmark.saved {
+  color: var(--orange-accent);
+}
+
+.delete-story-btn {
+  color: var(--medium-brown);
+}
+
+.delete-story-btn:hover {
+  color: var(--red);
 }
 
 .featured-stories {

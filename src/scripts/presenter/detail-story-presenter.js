@@ -3,7 +3,9 @@ import DetailStoryModel from '../models/detail-story-model';
 import AuthHelper from '../utils/auth-helper';
 import { parseActivePathname } from '../routes/url-parser';
 import { getDetailedLocation } from '../utils/geocoding-service';
+import IndexedDBHelper from '../utils/indexed-db-helper';
 import CONFIG from '../config';
+import Swal from '../utils/swal-config';
 
 class DetailStoryPage {
   constructor() {
@@ -51,6 +53,8 @@ class DetailStoryPage {
       }
 
       this._initBackButton();
+      this._initSaveButton();
+      await this._checkIfStorySaved(id);
     } catch (error) {
       console.error('Error rendering detail story page:', error);
       this._view.showError(error.message);
@@ -66,6 +70,89 @@ class DetailStoryPage {
         window.location.hash = '/';
       }
     });
+  }
+
+  /**
+   * Initializes the save button with a click handler
+   */
+  _initSaveButton() {
+    this._view.initializeSaveButton(this._handleSaveStory.bind(this));
+  }
+
+  /**
+   * Checks if the story is already saved and updates the UI accordingly
+   * @param {string} storyId - The ID of the story to check
+   */
+  async _checkIfStorySaved(storyId) {
+    try {
+      const isSaved = await IndexedDBHelper.isStorySaved(storyId);
+      this._view.updateSaveButtonState(isSaved);
+    } catch (error) {
+      console.error('Error checking if story is saved:', error);
+    }
+  }
+
+  /**
+   * Handles saving or unsaving a story
+   * @param {string} storyId - The ID of the story to save or unsave
+   * @returns {Promise<boolean>} - Whether the operation was successful
+   */
+  async _handleSaveStory(storyId) {
+    try {
+      // Check if story is already saved
+      const isSaved = await IndexedDBHelper.isStorySaved(storyId);
+
+      if (isSaved) {
+        // If already saved, delete it (unsave)
+        const success = await IndexedDBHelper.deleteStory(storyId);
+
+        if (success) {
+          Swal.fire({
+            title: 'Removed',
+            text: 'Story removed from your archive',
+            icon: 'success',
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000
+          });
+          return false; // Return false to indicate it's now unsaved
+        } else {
+          throw new Error('Failed to remove story from archive');
+        }
+      } else {
+        // If not saved, save it
+        const storyData = await this._model.getStoryById(storyId);
+        const success = await IndexedDBHelper.saveStory(storyData);
+
+        if (success) {
+          Swal.fire({
+            title: 'Saved!',
+            text: 'Story saved to your archive',
+            icon: 'success',
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000
+          });
+          return true; // Return true to indicate it's now saved
+        } else {
+          throw new Error('Failed to save story');
+        }
+      }
+    } catch (error) {
+      console.error('Error saving/unsaving story:', error);
+      Swal.fire({
+        title: 'Error',
+        text: 'Failed to update story. Please try again.',
+        icon: 'error',
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000
+      });
+      return isSaved; // Return the original state
+    }
   }
 
   async _initMap(storyData) {

@@ -80,6 +80,9 @@ class DetailStoryView {
           <a href="#/" class="btn btn-back" id="back-to-stories">
             <i class="fas fa-arrow-left"></i> Back to Stories
           </a>
+          <button class="btn btn-save" id="save-story-btn" data-story-id="${story.id}">
+            <i class="fas fa-bookmark"></i> Save Story
+          </button>
         </div>
       </div>
     `;
@@ -118,6 +121,49 @@ class DetailStoryView {
         event.preventDefault();
         onBackClick();
       });
+    }
+  }
+
+  /**
+   * Initializes the save button with a click handler
+   * @param {Function} onSaveClick
+   */
+  initializeSaveButton(onSaveClick) {
+    const saveButton = document.getElementById('save-story-btn');
+    if (saveButton && onSaveClick) {
+      saveButton.addEventListener('click', async (event) => {
+        event.preventDefault();
+        const storyId = saveButton.dataset.storyId;
+
+        // Get current state and toggle it immediately for instant feedback
+        const currentlySaved = saveButton.classList.contains('saved');
+        this.updateSaveButtonState(!currentlySaved);
+
+        // Call the save/unsave function and update again with the actual result
+        const isSaved = await onSaveClick(storyId);
+
+        // Only update if the result is different from what we expected
+        if (isSaved !== !currentlySaved) {
+          this.updateSaveButtonState(isSaved);
+        }
+      });
+    }
+  }
+
+  /**
+   * Updates the save button state based on whether the story is already saved
+   * @param {boolean} isSaved - Whether the story is saved
+   */
+  updateSaveButtonState(isSaved) {
+    const saveButton = document.getElementById('save-story-btn');
+    if (saveButton) {
+      if (isSaved) {
+        saveButton.classList.add('saved');
+        saveButton.innerHTML = '<i class="fas fa-bookmark"></i> Remove from Archive';
+      } else {
+        saveButton.classList.remove('saved');
+        saveButton.innerHTML = '<i class="fas fa-bookmark"></i> Save to Archive';
+      }
     }
   }
 

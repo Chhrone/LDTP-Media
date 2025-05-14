@@ -1,0 +1,80 @@
+/* Custom styles for SweetAlert2 */
+
+/* Ensure SweetAlert container has higher z-index than header */
+.swal2-container {
+  z-index: 10001 !important; /* Higher than header's 9999 */
+}
+
+/* Ensure toast notifications appear above header */
+.swal2-container.swal2-top-end {
+  z-index: 10001 !important;
+}
+
+/* Ensure the backdrop is also above the header */
+.swal2-backdrop-show {
+  z-index: 10000 !important;
+}
+
+/* Force all SweetAlert toasts to appear at the top-right corner */
+.swal2-container.swal2-center,
+.swal2-container.swal2-bottom,
+.swal2-container.swal2-bottom-end,
+.swal2-container.swal2-bottom-start,
+.swal2-container.swal2-center-left,
+.swal2-container.swal2-center-right,
+.swal2-container.swal2-center-start,
+.swal2-container.swal2-top,
+.swal2-container.swal2-top-left,
+.swal2-container.swal2-top-start {
+  /* Override any other position to be top-end (top-right) */
+  top: 0 !important;
+  right: 0 !important;
+  bottom: auto !important;
+  left: auto !important;
+  align-items: flex-start !important;
+  justify-content: flex-end !important;
+}
+
+/* Optional: Add some custom styling to match the app's theme */
+.swal2-popup {
+  border-radius: 8px !important;
+  font-family: 'Inter', sans-serif !important;
+}
+
+.swal2-title {
+  color: var(--dark-brown) !important;
+}
+
+.swal2-toast {
+  background-color: var(--cream) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+.swal2-toast .swal2-title {
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+}
+
+.swal2-toast .swal2-html-container {
+  font-size: 0.9rem !important;
+}
+
+/* Success toast */
+.swal2-toast.swal2-icon-success {
+  border-left: 4px solid var(--green) !important;
+}
+
+/* Error toast */
+.swal2-toast.swal2-icon-error {
+  border-left: 4px solid var(--red) !important;
+}
+
+/* Info toast */
+.swal2-toast.swal2-icon-info {
+  border-left: 4px solid var(--blue) !important;
+}
+
+/* Warning toast */
+.swal2-toast.swal2-icon-warning {
+  border-left: 4px solid var(--orange-accent) !important;
+}

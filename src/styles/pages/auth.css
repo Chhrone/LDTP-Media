@@ -4,6 +4,7 @@
   align-items: center;
   min-height: calc(100vh - 200px);
   padding: 20px;
+  background-color: var(--light-beige);
 }
 
 .auth-card {
@@ -13,6 +14,7 @@
   padding: 30px;
   width: 100%;
   max-width: 450px;
+  margin: 20px auto;
 }
 
 .auth-title {
@@ -20,6 +22,7 @@
   text-align: center;
   margin-bottom: 30px;
   font-size: 1.8rem;
+  font-weight: 600;
 }
 
 .auth-form {
@@ -35,8 +38,9 @@
 }
 
 .form-group label {
-  font-weight: bold;
+  font-weight: 500;
   color: var(--dark-brown);
+  font-size: 0.9rem;
 }
 
 .form-group input {
@@ -45,6 +49,7 @@
   border-radius: 4px;
   font-size: 1rem;
   background-color: var(--light-beige);
+  transition: border-color 0.3s, box-shadow 0.3s;
 }
 
 .form-group input:focus-visible {
@@ -67,7 +72,7 @@
   border: none;
   border-radius: 4px;
   font-size: 1rem;
-  font-weight: bold;
+  font-weight: 600;
   cursor: pointer;
   text-align: center;
   text-decoration: none;
@@ -113,7 +118,7 @@
 .auth-footer a {
   color: var(--orange-accent);
   text-decoration: none;
-  font-weight: bold;
+  font-weight: 600;
 }
 
 .auth-footer a:hover {
@@ -130,10 +135,20 @@
   display: none;
 }
 
+.error-container.info {
+  background-color: rgba(33, 150, 243, 0.1);
+  border-left: 4px solid #2196f3;
+  color: #0d47a1;
+}
+
 /* Auth-specific loading container with reduced spacing */
 .auth-loading-container {
   margin: 15px 0 !important;
   min-height: 40px !important;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .auth-loading-container .loading-spinner {
@@ -145,4 +160,6 @@
 .auth-loading-container .loading-text {
   font-size: 1rem !important;
   min-height: 1.2em !important;
+  color: var(--dark-brown);
+  text-align: center;
 }

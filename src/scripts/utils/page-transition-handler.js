@@ -44,10 +44,13 @@ class PageTransitionHandler {
                                       (currentRoute === '/' || currentRoute.startsWith('/page/'));
     const isToSettingsTransition = currentRoute === '/settings';
     const isToAboutTransition = currentRoute === '/about';
+    const isToArchiveTransition = currentRoute === '/archive';
     const isFromSettingsTransition = previousRoute === '/settings' &&
                                     (currentRoute === '/' || currentRoute.startsWith('/page/'));
     const isFromAboutTransition = previousRoute === '/about' &&
                                  (currentRoute === '/' || currentRoute.startsWith('/page/'));
+    const isFromArchiveTransition = previousRoute === '/archive' &&
+                                   (currentRoute === '/' || currentRoute.startsWith('/page/'));
     const isToCreateStoryTransition = currentRoute === '/create-story';
     const isFromCreateStoryTransition = previousRoute === '/create-story' &&
                                        (currentRoute === '/' || currentRoute.startsWith('/page/'));
@@ -58,8 +61,10 @@ class PageTransitionHandler {
            isRegisterToHomeTransition ||
            isToSettingsTransition ||
            isToAboutTransition ||
+           isToArchiveTransition ||
            isFromSettingsTransition ||
            isFromAboutTransition ||
+           isFromArchiveTransition ||
            isToCreateStoryTransition ||
            isFromCreateStoryTransition;
   }
@@ -69,18 +74,22 @@ class PageTransitionHandler {
    * These classes control transition animations in CSS
    */
   updateBodyClasses(previousRoute, currentRoute) {
-    document.body.classList.remove('from-settings', 'from-about', 'from-detail');
+    document.body.classList.remove('from-settings', 'from-about', 'from-archive', 'from-detail');
 
     const isFromSettingsTransition = previousRoute === '/settings' &&
                                     (currentRoute === '/' || currentRoute.startsWith('/page/'));
     const isFromAboutTransition = previousRoute === '/about' &&
                                  (currentRoute === '/' || currentRoute.startsWith('/page/'));
+    const isFromArchiveTransition = previousRoute === '/archive' &&
+                                   (currentRoute === '/' || currentRoute.startsWith('/page/'));
     const isDetailToHomeTransition = this.isDetailToHomeTransition(previousRoute, currentRoute);
 
     if (isFromSettingsTransition) {
       document.body.classList.add('from-settings');
     } else if (isFromAboutTransition) {
       document.body.classList.add('from-about');
+    } else if (isFromArchiveTransition) {
+      document.body.classList.add('from-archive');
     } else if (isDetailToHomeTransition) {
       document.body.classList.add('from-detail');
     }

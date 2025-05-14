@@ -10,7 +10,8 @@ class NotFoundPage {
   }
 
   async afterRender() {
-    // No additional logic needed after rendering
+    // Add any additional functionality after rendering
+    document.title = '404 - Page Not Found | Loughshinny Dublinn Travel Post';
   }
 }
 

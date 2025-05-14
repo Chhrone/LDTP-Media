@@ -88,8 +88,12 @@ class App {
       const page = routes[route];
 
       if (!page) {
-        // Redirect to the Not Found page
         window.location.hash = '#/not-found';
+        return;
+      }
+
+      // Check authentication before rendering protected routes
+      if (!authPresenter.checkAuth(route)) {
         return;
       }
 
@@ -115,38 +119,22 @@ class App {
 
       this._currentPage = page;
       this._pageTransitionHandler.updateBodyClasses(previousRoute, route);
+      this._pageTransitionHandler.setPreviousRoute(route);
 
       const shouldUseViewTransition = this._pageTransitionHandler.shouldUseViewTransition(previousRoute, route);
 
-      if (shouldUseViewTransition) {
-        const transition = document.startViewTransition(async () => {
+      if (shouldUseViewTransition && document.startViewTransition) {
+        document.startViewTransition(async () => {
           this._content.innerHTML = await page.render();
-          this._handleScrolling(isDetailToHomeTransition, isPaginationNavigation);
-
           await page.afterRender();
-          this._navbarHandler.closeNavigationDrawer();
-          this._backToTopHandler.updateBackToTopButton(route);
-          this._navbarHandler.updateUserUI();
-        });
-
-        transition.ready.catch(error => {
-          console.warn('View transition failed:', error);
         });
       } else {
         this._content.innerHTML = await page.render();
-        this._handleScrolling(isDetailToHomeTransition, isPaginationNavigation);
-
         await page.afterRender();
-        this._navbarHandler.closeNavigationDrawer();
-        this._backToTopHandler.updateBackToTopButton(route);
-        this._navbarHandler.updateUserUI();
       }
-
-      this._pageTransitionHandler.setPreviousRoute(route);
     } catch (error) {
-      console.error("Error rendering page:", error);
-      this._content.innerHTML =
-        '<div class="container"><h2>Something went wrong</h2><p>Please try again later</p></div>';
+      console.error('Error rendering page:', error);
+      window.location.hash = '#/not-found';
     }
   }
 

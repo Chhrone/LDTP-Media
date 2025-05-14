@@ -32,13 +32,21 @@ class LoginPage {
   }
 
   async render() {
-    if (AuthHelper.redirectIfLoggedIn()) {
-      return '';
+    // Always render the login form
+    const template = this._view.getTemplate();
+    console.log('Login form template:', template); // Debug log
+    return template;
+  }
+
+  async afterRender() {
+    // Check if user is already logged in
+    if (AuthHelper.isLoggedIn()) {
+      const userData = AuthHelper.getUserData();
+      if (userData) {
+        this._view.showInfo(`You are already logged in as ${userData.name}. You can continue to the home page or log out first.`);
+      }
     }
 
-    return this._view.getTemplate();
-  }
-  async afterRender() {
     this._view.initializeGuestPostButton(() => {
       this._view.navigateTo('#/guest-story');
     });
@@ -70,19 +78,19 @@ class LoginPage {
     });
   }
 
-  async _startLoadingAnimation() {
-    this._view.updateLoadingText('Logging in...');
-    await sleep(1500);
+  _startLoadingAnimation() {
+    let currentIndex = 0;
+    const messages = shuffleArray([...this._loadingMessages]);
 
-    const remainingMessages = this._loadingMessages.filter(msg => msg !== 'Logging in...');
-    const shuffledMessages = shuffleArray(remainingMessages);
-    let messageIndex = 0;
+    const updateMessage = () => {
+      if (currentIndex < messages.length) {
+        this._view.updateLoadingText(messages[currentIndex]);
+        currentIndex++;
+        setTimeout(updateMessage, 2000);
+      }
+    };
 
-    while (messageIndex < shuffledMessages.length) {
-      this._view.updateLoadingText(shuffledMessages[messageIndex]);
-      await sleep(1500);
-      messageIndex = (messageIndex + 1) % shuffledMessages.length;
-    }
+    updateMessage();
   }
 }
 
