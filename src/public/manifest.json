@@ -86,21 +86,9 @@
       "form_factor": "wide"
     },
     {
-      "src": "/screenshots/desktop-2.png",
-      "sizes": "1280x800",
-      "type": "image/png",
-      "form_factor": "wide"
-    },
-    {
-      "src": "/screenshots/mobile-1.png",
+      "src": "/screenshots/mobile-1.jpg",
       "sizes": "390x844",
-      "type": "image/png",
-      "form_factor": "narrow"
-    },
-    {
-      "src": "/screenshots/mobile-2.png",
-      "sizes": "390x844",
-      "type": "image/png",
+      "type": "image/jpeg",
       "form_factor": "narrow"
     }
   ]
