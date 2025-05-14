@@ -7,6 +7,7 @@ import BackToTopHandler from "./utils/back-to-top-handler";
 import FabVisibilityHandler from "./utils/fab-visibility-handler";
 import AccessibilityHandler from "./utils/accessibility-handler";
 import PageTransitionHandler from "./utils/page-transition-handler";
+import IndexedDBHelper from "./utils/indexed-db-helper";
 
 class App {
   constructor({ content, drawerButton, navigationDrawer }) {
@@ -24,6 +25,17 @@ class App {
     this._initHandlers();
     this._initLogoutFunctionality();
     this._initNotifications();
+    this._setupBeforeUnload();
+  }
+
+  /**
+   * Set up event listener for before unload to clean up resources
+   */
+  _setupBeforeUnload() {
+    window.addEventListener('beforeunload', () => {
+      // Close IndexedDB connection
+      IndexedDBHelper.closeDB();
+    });
   }
 
   /**

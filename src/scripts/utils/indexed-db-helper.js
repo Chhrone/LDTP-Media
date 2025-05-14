@@ -6,12 +6,18 @@ class IndexedDBHelper {
   static DB_NAME = 'ldtp-media-db';
   static DB_VERSION = 1;
   static OBJECT_STORE_NAME = 'stories';
+  static dbInstance = null;
 
   /**
    * Open the IndexedDB database
    * @returns {Promise<IDBDatabase>} The database instance
    */
   static openDB() {
+    // If we already have a connection, return it
+    if (this.dbInstance) {
+      return Promise.resolve(this.dbInstance);
+    }
+
     return new Promise((resolve, reject) => {
       if (!window.indexedDB) {
         reject(new Error('Your browser doesn\'t support IndexedDB'));
@@ -25,7 +31,19 @@ class IndexedDBHelper {
       };
 
       request.onsuccess = (event) => {
-        resolve(event.target.result);
+        this.dbInstance = event.target.result;
+
+        // Handle connection closing
+        this.dbInstance.onclose = () => {
+          this.dbInstance = null;
+        };
+
+        // Handle connection errors
+        this.dbInstance.onerror = () => {
+          this.dbInstance = null;
+        };
+
+        resolve(this.dbInstance);
       };
 
       request.onupgradeneeded = (event) => {
@@ -48,26 +66,24 @@ class IndexedDBHelper {
       return new Promise((resolve, reject) => {
         const transaction = db.transaction(this.OBJECT_STORE_NAME, 'readwrite');
         const store = transaction.objectStore(this.OBJECT_STORE_NAME);
-        
+
         // Add timestamp for sorting
         const storyToSave = {
           ...story,
           savedAt: new Date().toISOString()
         };
-        
+
         const request = store.put(storyToSave);
-        
+
         request.onsuccess = () => {
           resolve(true);
         };
-        
+
         request.onerror = () => {
           reject(new Error('Error saving story to IndexedDB'));
         };
-        
-        transaction.oncomplete = () => {
-          db.close();
-        };
+
+        // Don't close the database connection after transaction
       });
     } catch (error) {
       console.error('Error in saveStory:', error);
@@ -86,18 +102,16 @@ class IndexedDBHelper {
         const transaction = db.transaction(this.OBJECT_STORE_NAME, 'readonly');
         const store = transaction.objectStore(this.OBJECT_STORE_NAME);
         const request = store.getAll();
-        
+
         request.onsuccess = () => {
           resolve(request.result);
         };
-        
+
         request.onerror = () => {
           reject(new Error('Error getting stories from IndexedDB'));
         };
-        
-        transaction.oncomplete = () => {
-          db.close();
-        };
+
+        // Don't close the database connection after transaction
       });
     } catch (error) {
       console.error('Error in getAllStories:', error);
@@ -117,18 +131,16 @@ class IndexedDBHelper {
         const transaction = db.transaction(this.OBJECT_STORE_NAME, 'readwrite');
         const store = transaction.objectStore(this.OBJECT_STORE_NAME);
         const request = store.delete(id);
-        
+
         request.onsuccess = () => {
           resolve(true);
         };
-        
+
         request.onerror = () => {
           reject(new Error('Error deleting story from IndexedDB'));
         };
-        
-        transaction.oncomplete = () => {
-          db.close();
-        };
+
+        // Don't close the database connection after transaction
       });
     } catch (error) {
       console.error('Error in deleteStory:', error);
@@ -148,22 +160,31 @@ class IndexedDBHelper {
         const transaction = db.transaction(this.OBJECT_STORE_NAME, 'readonly');
         const store = transaction.objectStore(this.OBJECT_STORE_NAME);
         const request = store.get(id);
-        
+
         request.onsuccess = () => {
           resolve(!!request.result);
         };
-        
+
         request.onerror = () => {
           reject(new Error('Error checking if story is saved'));
         };
-        
-        transaction.oncomplete = () => {
-          db.close();
-        };
+
+        // Don't close the database connection after transaction
       });
     } catch (error) {
       console.error('Error in isStorySaved:', error);
       return false;
+    }
+  }
+
+  /**
+   * Close the database connection
+   * Should be called when the application is about to be unloaded
+   */
+  static closeDB() {
+    if (this.dbInstance) {
+      this.dbInstance.close();
+      this.dbInstance = null;
     }
   }
 }
