@@ -109,14 +109,9 @@ class CreateStoryPage {
 
       await this._model.createStory(formData);
 
-      Swal.customFire({
-        title: 'Success!',
-        text: 'Your story has been uploaded successfully.',
-        icon: 'success',
-        confirmButtonText: 'Go to Home'
-      }).then(() => {
-        window.location.hash = '#/';
-      });
+
+      // Push notification will be used instead
+      window.location.hash = '#/';
     } catch (error) {
       console.error('Error creating story:', error);
 

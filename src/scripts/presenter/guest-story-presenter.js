@@ -102,14 +102,9 @@ class GuestStoryPage {
 
       await this._model.createGuestStory(formData);
 
-      Swal.customFire({
-        title: 'Success!',
-        text: 'Your story has been uploaded successfully.',
-        icon: 'success',
-        confirmButtonText: 'Go to Home'
-      }).then(() => {
-        window.location.hash = '#/';
-      });
+      // Redirect to home page without showing success notification
+      // Push notification will be used instead
+      window.location.hash = '#/';
     } catch (error) {
       console.error('Error creating story:', error);
 
