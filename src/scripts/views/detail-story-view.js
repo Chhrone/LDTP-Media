@@ -58,7 +58,7 @@ class DetailStoryView {
 
         ${story.photo ? `
           <figure class="detail-story-image" style="view-transition-name: story-image-${story.id}">
-            <img src="${story.photo}" alt="${story.title}" loading="lazy">
+            <img src="${story.photo}" alt="${story.title}" loading="lazy" crossorigin="anonymous">
             <figcaption class="visually-hidden">${story.title}</figcaption>
           </figure>
         ` : ''}
@@ -266,6 +266,20 @@ class DetailStoryView {
   initializeSessionStorage(storyId, currentPath, referrerPath) {
     sessionStorage.setItem('lastViewedStoryId', storyId);
 
+    // Store the referrer information to know where to return
+    if (referrerPath.includes('#/archive')) {
+      sessionStorage.setItem('storyReferrer', 'archive');
+    } else if (referrerPath.includes('#/page/')) {
+      sessionStorage.setItem('storyReferrer', 'pagination');
+      const referrerPageMatch = referrerPath.match(/page\/(\d+)/);
+      if (referrerPageMatch && referrerPageMatch[1]) {
+        sessionStorage.setItem('lastViewedPage', referrerPageMatch[1]);
+      }
+    } else {
+      sessionStorage.setItem('storyReferrer', 'home');
+    }
+
+    // Still maintain the page number logic for backward compatibility
     const pageMatch = currentPath.match(/#\/page\/(\d+)/);
     if (pageMatch && pageMatch[1]) {
       sessionStorage.setItem('lastViewedPage', pageMatch[1]);

@@ -7,6 +7,11 @@
     animation: none !important;
   }
 
+  /* When returning from detail page to archive page, ensure archive-content has no animation */
+  .from-detail-to-archive ::view-transition-new(archive-page) {
+    animation: none !important;
+  }
+
   /* Specific rules for map and pagination sections */
   ::view-transition-new(map-section),
   ::view-transition-new(pagination-section) {

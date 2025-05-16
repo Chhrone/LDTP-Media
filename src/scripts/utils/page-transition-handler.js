@@ -24,6 +24,14 @@ class PageTransitionHandler {
            currentRoute.startsWith('/story/');
   }
 
+  isArchiveToDetailTransition(previousRoute, currentRoute) {
+    return previousRoute === '/archive' && currentRoute.startsWith('/story/');
+  }
+
+  isDetailToArchiveTransition(previousRoute, currentRoute) {
+    return previousRoute.startsWith('/story/') && currentRoute === '/archive';
+  }
+
   isDetailToHomeTransition(previousRoute, currentRoute) {
     return previousRoute.startsWith('/story/') &&
            (currentRoute === '/' || currentRoute.startsWith('/page/'));
@@ -38,6 +46,8 @@ class PageTransitionHandler {
 
     const isHomeToDetailTransition = this.isHomeToDetailTransition(previousRoute, currentRoute);
     const isDetailToHomeTransition = this.isDetailToHomeTransition(previousRoute, currentRoute);
+    const isArchiveToDetailTransition = this.isArchiveToDetailTransition(previousRoute, currentRoute);
+    const isDetailToArchiveTransition = this.isDetailToArchiveTransition(previousRoute, currentRoute);
     const isLoginToHomeTransition = previousRoute === '/login' &&
                                    (currentRoute === '/' || currentRoute.startsWith('/page/'));
     const isRegisterToHomeTransition = previousRoute === '/register' &&
@@ -57,6 +67,8 @@ class PageTransitionHandler {
 
     return isHomeToDetailTransition ||
            isDetailToHomeTransition ||
+           isArchiveToDetailTransition ||
+           isDetailToArchiveTransition ||
            isLoginToHomeTransition ||
            isRegisterToHomeTransition ||
            isToSettingsTransition ||
@@ -74,7 +86,7 @@ class PageTransitionHandler {
    * These classes control transition animations in CSS
    */
   updateBodyClasses(previousRoute, currentRoute) {
-    document.body.classList.remove('from-settings', 'from-about', 'from-archive', 'from-detail');
+    document.body.classList.remove('from-settings', 'from-about', 'from-archive', 'from-detail', 'from-archive-to-detail', 'from-detail-to-archive');
 
     const isFromSettingsTransition = previousRoute === '/settings' &&
                                     (currentRoute === '/' || currentRoute.startsWith('/page/'));
@@ -83,6 +95,8 @@ class PageTransitionHandler {
     const isFromArchiveTransition = previousRoute === '/archive' &&
                                    (currentRoute === '/' || currentRoute.startsWith('/page/'));
     const isDetailToHomeTransition = this.isDetailToHomeTransition(previousRoute, currentRoute);
+    const isArchiveToDetailTransition = this.isArchiveToDetailTransition(previousRoute, currentRoute);
+    const isDetailToArchiveTransition = this.isDetailToArchiveTransition(previousRoute, currentRoute);
 
     if (isFromSettingsTransition) {
       document.body.classList.add('from-settings');
@@ -92,6 +106,10 @@ class PageTransitionHandler {
       document.body.classList.add('from-archive');
     } else if (isDetailToHomeTransition) {
       document.body.classList.add('from-detail');
+    } else if (isArchiveToDetailTransition) {
+      document.body.classList.add('from-archive-to-detail');
+    } else if (isDetailToArchiveTransition) {
+      document.body.classList.add('from-detail-to-archive');
     }
   }
 

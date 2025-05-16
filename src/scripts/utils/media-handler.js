@@ -91,6 +91,7 @@ class MediaHandler {
         const img = document.createElement('img');
         img.src = imageUrl;
         img.alt = "Captured photo";
+        img.crossOrigin = "anonymous";
 
         imagePreview.innerHTML = '';
         imagePreview.appendChild(img);
@@ -171,6 +172,7 @@ class MediaHandler {
           const img = document.createElement('img');
           img.src = e.target.result;
           img.alt = "Uploaded image";
+          img.crossOrigin = "anonymous";
 
           uploadPreview.innerHTML = '';
           uploadPreview.appendChild(img);

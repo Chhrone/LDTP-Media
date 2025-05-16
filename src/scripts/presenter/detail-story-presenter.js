@@ -63,11 +63,28 @@ class DetailStoryPage {
 
   _initBackButton() {
     this._view.initializeBackButton(() => {
-      const lastPage = sessionStorage.getItem('lastViewedPage');
-      if (lastPage && lastPage !== '1') {
-        window.location.hash = `/page/${lastPage}`;
+      // Check the referrer to determine where to go back to
+      const referrer = sessionStorage.getItem('storyReferrer');
+
+      if (referrer === 'archive') {
+        // If came from archive, go back to archive
+        window.location.hash = '/archive';
+      } else if (referrer === 'pagination') {
+        // If came from a pagination page, go back to that page
+        const lastPage = sessionStorage.getItem('lastViewedPage');
+        if (lastPage && lastPage !== '1') {
+          window.location.hash = `/page/${lastPage}`;
+        } else {
+          window.location.hash = '/';
+        }
       } else {
-        window.location.hash = '/';
+        // Default: go back to home or specific page
+        const lastPage = sessionStorage.getItem('lastViewedPage');
+        if (lastPage && lastPage !== '1') {
+          window.location.hash = `/page/${lastPage}`;
+        } else {
+          window.location.hash = '/';
+        }
       }
     });
   }

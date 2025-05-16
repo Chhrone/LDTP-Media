@@ -32,7 +32,7 @@ class HomeView {
             ${featuredStories.map(story => `
               <article class="story-card" data-story-id="${story.id}" style="view-transition-name: story-card-${story.id}">
                 ${story.photo ? `<figure class="story-image" style="view-transition-name: story-image-${story.id}">
-                  <img src="${story.photo}" alt="${story.title}" loading="lazy">
+                  <img src="${story.photo}" alt="${story.title}" loading="lazy" crossorigin="anonymous">
                   <figcaption class="visually-hidden">${story.title}</figcaption>
                 </figure>` : ''}
                 <div class="story-content" style="view-transition-name: story-content-${story.id}">
